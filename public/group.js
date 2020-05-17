@@ -1,1 +1,1 @@
-// group.js
+/* group.js */
