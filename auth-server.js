@@ -1,7 +1,3 @@
-/*********************************/
-/* Remove unneeded functionality */
-/*********************************/
-
 /**
  * This is an example of a basic node.js script that performs
  * the Authorization Code oAuth2 flow to authenticate against
@@ -43,6 +39,17 @@ var app = express();
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
+
+/* debug */
+
+app.get('/user', (req, res) => {
+  res.send({
+    "name": "Joey Emanuele",
+    "age": 23
+  });
+})
+
+/*********/
 
 app.get('/login', function(req, res) {
 
@@ -104,7 +111,7 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          console.log(body);
+          response.send(body);
         });
 
         // we can also pass the token to the browser to make requests from there
