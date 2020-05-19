@@ -40,17 +40,6 @@ app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
-/* debug */
-
-app.get('/user', (req, res) => {
-  res.send({
-    "name": "Joey Emanuele",
-    "age": 23
-  });
-})
-
-/*********/
-
 app.get('/login', function(req, res) {
 
   var state = generateRandomString(16);
@@ -111,7 +100,7 @@ app.get('/callback', function(req, res) {
 
         // use the access token to access the Spotify Web API
         request.get(options, function(error, response, body) {
-          response.send(body);
+          //console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
