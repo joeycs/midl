@@ -1,13 +1,15 @@
-document.getElementById('login').addEventListener('click', () => {
-    document.getElementById('debug').innerHTML = 'Logging in...';
-    setTimeout(() => {
-        fetch('/user')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('debug').innerHTML = data.name + ", " + data.age;
-            })
-            .catch(error => {
-                alert(error);
-            });
-    }, 500);
-});
+const ACCESS_TOKEN = 'midl-access-token';
+
+document.addEventListener('DOMContentLoaded', () => {
+    if (localStorage.getItem(ACCESS_TOKEN) !== null
+        /* && actual authorization */) {
+        window.location = '/group.html';
+    }
+    else {
+        localStorage.setItem(ACCESS_TOKEN, window.location.hash);    
+        document.getElementById('login').addEventListener('click', () => {
+            document.getElementById('debug').innerHTML = 'Logging in...';
+            window.location = '/login';
+        });
+    }
+})
