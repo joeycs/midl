@@ -17,12 +17,15 @@ var client_id = '1f6d32e710fa4ebb9a846252034c4df5'; // Your client id
 var client_secret = '4d1d70eec5dc42c3bbd0db052790805b'; // Your secret
 var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
 
+var stateKey = 'spotify_auth_state';
+var app = express();
+
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
  * @return {string} The generated string
  */
-var generateRandomString = function(length) {
+var generateRandomString = (length) => {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -32,15 +35,11 @@ var generateRandomString = function(length) {
   return text;
 };
 
-var stateKey = 'spotify_auth_state';
-
-var app = express();
-
 app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
-app.get('/login', function(req, res) {
+app.get('/login', (req, res) => {
 
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
@@ -57,7 +56,7 @@ app.get('/login', function(req, res) {
     }));
 });
 
-app.get('/callback', function(req, res) {
+app.get('/callback', (req, res) => {
 
   // your application requests refresh and access tokens
   // after checking the state parameter
@@ -86,7 +85,7 @@ app.get('/callback', function(req, res) {
       json: true
     };
 
-    request.post(authOptions, function(error, response, body) {
+    request.post(authOptions, (error, response, body) => {
       if (!error && response.statusCode === 200) {
 
         var access_token = body.access_token,
@@ -99,12 +98,12 @@ app.get('/callback', function(req, res) {
         };
 
         // use the access token to access the Spotify Web API
-        request.get(options, function(error, response, body) {
+        request.get(options, (error, response, body) => {
           //console.log(body);
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('/#' +
+        res.redirect('http://localhost:8888/group.html#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
@@ -119,7 +118,7 @@ app.get('/callback', function(req, res) {
   }
 });
 
-app.get('/refresh_token', function(req, res) {
+app.get('/refresh_token', (req, res) => {
 
   // requesting access token from refresh token
   var refresh_token = req.query.refresh_token;
@@ -133,7 +132,7 @@ app.get('/refresh_token', function(req, res) {
     json: true
   };
 
-  request.post(authOptions, function(error, response, body) {
+  request.post(authOptions, (error, response, body) => {
     if (!error && response.statusCode === 200) {
       var access_token = body.access_token;
       res.send({
