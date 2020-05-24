@@ -11,16 +11,24 @@ function getHashParams() {
     return hashParams;
 }
 
+function reportError(err) {
+    document.getElementById('debug').innerHTML = err;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     spotify.setAccessToken(getHashParams().access_token);
+
     spotify.getMe()
         .then(res => {
-            document.getElementById('debug').innerHTML = res.display_name;
-        })
-        .catch(err => {
-            document.getElementById('debug').innerHTML = err;
-        })
+            document.getElementById('displayName').innerHTML = res.display_name
+        });
+        
+    spotify.getMyCurrentPlaybackState()
+        .then(res => {
+            document.getElementById('songName').innerHTML = res.item.name
+            document.getElementById('albumArt').src = res.item.album.images[0].url
+        });
 
     document.getElementById('logout').addEventListener('click', () => {
         document.getElementById('debug').innerHTML = 'Logging out...';
