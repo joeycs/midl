@@ -5,13 +5,19 @@
     </head>
     <body>
         <header>
-            <h1>{User}'s midl group</h1>
+            <h1><span id = "displayName"></span>'s midl group</h1>
             <p>
                 Welcome to your group! Add a friend to get started.
             </p>
         </header>
 
         <main>
+            <div>
+                Now Playing: <span id = "songName">Not currently listening to a track!</span>
+            </div>
+            <div>
+                <img id = "albumArt"/>
+            </div>
             <button id = "logout">Log out</button>
             <p id = "debug"></p>
         </main>
@@ -23,6 +29,5 @@
             </a>
         </footer>
         <script src = "bundle.js"></script>
-        <script src = "group.js"></script>
     </body>
 </html>

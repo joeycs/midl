@@ -1,1 +1,72 @@
-/* theme.css */
+body {
+    background-color: #e9e3d5;
+    color: #181818;
+    font-family: 'Open Sans', Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+}
+
+h1 {
+    background-color: #181818;
+    color: #e9e3d5;
+    font-family: 'Product Sans', Helvetica, sans-serif;
+    padding: 8px;
+}
+
+button {
+    background: #181818;
+    border: 0;
+    border-radius: 10px;
+    color: #e9e3d5;
+    cursor: pointer;
+    font-family: 'Product Sans', Helvetica, sans-serif;
+    font-size: x-large;
+    height: auto;
+    width: auto;
+    margin: 15px;
+    padding: 8px;
+    transition: all 0.3s ease 0s;
+}
+
+button:hover {
+    background: #d68260;
+    color: #181818;
+    transition: all 0.3s ease 0s;
+}
+
+a {
+    color: #9d270b;
+    margin: 15px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+a:hover {
+    color: #691c07;
+    transition: 0.2s;
+}
+
+p {
+    margin: 15px;
+}
+
+div {
+    margin: 15px;
+}
+
+img {
+    border: 1px solid #181818;
+    height: 30vh;
+    width: auto;
+}
+
+hr {
+    background-color: #181818;
+    border: 0;
+    color: #181818;
+    height: 1px;
+    width: 75%;
+    opacity: 0.4;
+}
