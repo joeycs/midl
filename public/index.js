@@ -1,8 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.getElementById('hidden-header').style.color = "#e9e3d5";
 
-    document.getElementById('login').addEventListener('click', () => {
-        document.getElementById('debug').innerHTML = 'Logging in...';
-        window.location = '/login';
-    });
-
-})
+document.getElementById('login').addEventListener('click', () => {
+    window.location = '/login';
+});

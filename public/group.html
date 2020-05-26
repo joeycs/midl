@@ -5,7 +5,7 @@
     </head>
     <body>
         <header>
-            <h1><span id = "displayName"></span>'s midl group</h1>
+            <h1 id = "hidden-header"><span id = "display-name"></span>'s midl group</h1>
             <p>
                 Welcome to your group! Add a friend to get started.
             </p>
@@ -13,10 +13,17 @@
 
         <main>
             <div>
-                Now Playing: <span id = "songName">Not currently listening to a track!</span>
+                Now Playing: 
+                <span id = "current-track">
+                    <span class = "metadata" id = "track-name">Not currently listening to a track!</span>
+                    <span id = "on"></span>
+                    <span class = "metadata" id = "album-name"></span>
+                    <span id = "by"></span>
+                    <span class = "metadata" id = "artist-name"></span>
+                </span>
             </div>
             <div>
-                <img id = "albumArt"/>
+                <img id = "album-art"/>
             </div>
             <button id = "logout">Log out</button>
             <p id = "debug"></p>

@@ -1,7 +1,7 @@
 var SpotifyWebApi = require('../node_modules/spotify-web-api-js');
 var spotify = new SpotifyWebApi();
 
-function getHashParams() {
+const getHashParams = () => {
     var hashParams = {};
     var e, r = /([^&;=]+)=?([^&;]*)/g,
         q = window.location.hash.substring(1);
@@ -11,28 +11,45 @@ function getHashParams() {
     return hashParams;
 }
 
-function reportError(err) {
+const reportError = (err) => {
     document.getElementById('debug').innerHTML = err;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
-    spotify.setAccessToken(getHashParams().access_token);
-
+const showUser = (/* possible params for adaptability */) => {
     spotify.getMe()
-        .then(res => {
-            document.getElementById('displayName').innerHTML = res.display_name
-        });
-        
-    spotify.getMyCurrentPlaybackState()
-        .then(res => {
-            document.getElementById('songName').innerHTML = res.item.name
-            document.getElementById('albumArt').src = res.item.album.images[0].url
-        });
-
-    document.getElementById('logout').addEventListener('click', () => {
-        document.getElementById('debug').innerHTML = 'Logging out...';
-        window.location = '/index.html'; 
+    .then(res => {
+        document.getElementById('display-name').innerHTML = res.display_name
+    })
+    .then(() => {
+        document.getElementById('hidden-header').style.color = "#e9e3d5";
     });
+}
 
-})
+const showPlayback = (/* possible params for adaptability */) => {
+    spotify.getMyCurrentPlaybackState()
+    .then(res => {
+        document.getElementById('track-name').innerHTML = res.item.name;
+        document.getElementById('on').innerHTML = "on";
+        document.getElementById('album-name').innerHTML = res.item.album.name;
+        document.getElementById('by').innerHTML = "by";
+        document.getElementById('artist-name').innerHTML = res.item.artists[0].name;
+        document.getElementById('album-art').src = res.item.album.images[0].url
+    })
+    .then(() => {
+        document.getElementById('current-track').style.color = "#181818";
+        document.getElementById('album-art').style.border = "2px solid #181818";
+        document.getElementById('album-art').style.height = "30vh";
+    })
+    .catch(() => {
+        document.getElementById('current-track').style.color = "#181818";
+    })
+}
+
+spotify.setAccessToken(getHashParams().access_token);
+
+showUser();
+showPlayback();   
+
+document.getElementById('logout').addEventListener('click', () => {
+    window.location = '/index.html'; 
+});
