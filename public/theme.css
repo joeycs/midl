@@ -1,11 +1,13 @@
 a {
+    /*color: #691c07;*/
     color: #9d270b;
     margin: 2vw;
     text-decoration: none;
 }
 
 a:hover {
-    color: #691c07;
+    color: #d68260;
+    transition: 0.2s;
 }
 
 body {
@@ -19,24 +21,21 @@ body {
     transition: 0.3s;
 }
 
-button {
+button, #submit-user-id {
     background: #181818;
     border: 0;
-    border-radius: 10px;
+    border-radius: 5px;
     color: #e9e3d5;
     cursor: pointer;
     font-family: 'Product Sans', Helvetica, sans-serif;
     font-size: x-large;
     height: auto;
     width: auto;
-    margin-left: 2vw;
-    margin-bottom: 2vh;
-    margin-top: 2vh;
     padding: 8px;
     transition: 0.3s, margin 0s;
 }
 
-button:hover {
+button:hover, #submit-user-id:hover {
     background: #d68260;
     color: #181818;
     transition: 0.3s;
@@ -44,6 +43,8 @@ button:hover {
 
 div {
     margin-left: 2vw;
+    margin-bottom: 2vh;
+    margin-top: 2vh;
 }
 
 h1 {
@@ -65,24 +66,24 @@ hr {
     opacity: 0.4;
 }
 
-p {
-    margin-left: 2vw;
-    margin-bottom: 2vh;
-    margin-top: 2vh;
+img {
+    border: none;
+    transition: 0.5s, border 0s, margin 0s;
+}
+
+input {
+    background: #181818;
+    border: 0;
+    border-radius: 5px;
+    color: #e9e3d5;
+    font-size: large;
+    height: 40px;
+    padding-bottom: 0;
+    padding-top: 5px;
 }
 
 #album-art {
-    border: none;
-    display: none;
-    height: 32vh;
-    width: auto;
-    margin-bottom: 8px;
-    margin-top: 8px;
-    transition: 0.3s, border 0s;
-}
-
-#hidden-header {
-    color: #181818;
+    height: 17vh;
 }
 
 #current-track {
@@ -90,6 +91,29 @@ p {
     transition: 0.3s;
 }
 
-.metadata {
-    font-weight: bold;
+#hidden-header {
+    color: #181818;
+}
+
+#pics-bg {
+    background: #181818;
+    height: 19vh;
+    margin: 0;
+}
+
+#pics-container {
+    position: relative;
+    left: -100%;
+    margin: 0;
+    transition: 0.5s;
+}
+
+.profile-pic {
+    border-radius: 50%;
+    object-fit: cover;
+    height: 0;
+    width: 0;
+    margin-left: 2vw;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
 }

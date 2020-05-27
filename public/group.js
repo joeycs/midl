@@ -1,9 +1,10 @@
-var SpotifyWebApi = require('../node_modules/spotify-web-api-js');
-var spotify = new SpotifyWebApi();
+// my user id = 12169450242
+let SpotifyWebApi = require('../node_modules/spotify-web-api-js');
+let spotify = new SpotifyWebApi();
 
 const getHashParams = () => {
-    var hashParams = {};
-    var e, r = /([^&;=]+)=?([^&;]*)/g,
+    let hashParams = {};
+    let e, r = /([^&;=]+)=?([^&;]*)/g,
         q = window.location.hash.substring(1);
     while ( e = r.exec(q)) {
        hashParams[e[1]] = decodeURIComponent(e[2]);
@@ -11,44 +12,83 @@ const getHashParams = () => {
     return hashParams;
 }
 
-const reportError = (err) => {
-    document.getElementById('debug').innerHTML = err;
+const addUser = (userId) => {
+    if (userId === 'me') {
+        spotify.getMe()
+            .then(res => {
+                document.getElementById('display-name').innerHTML = res.display_name;
+                document.getElementById('my-pic').src = res.images[0].url;
+            })
+            .then(() => {
+                document.getElementById('hidden-header').style.color = '#e9e3d5';
+                document.getElementById('my-pic').setAttribute(
+                    "style", 
+                    "height: 15vh; width: 15vh"
+                );
+            })
+            .catch(() => {
+                document.getElementById('my-pic').style.display = 'none';
+            });
+    }
+    else {
+        spotify.getUser(userId)
+            .then(res => {
+                document.getElementById('friend-pic').src = res.images[0].url;
+                document.getElementById('friend-pic').setAttribute(
+                    "style", 
+                    "height: 15vh; width: 15vh"
+                );
+            })
+            .catch(() => {
+                document.getElementById('friend-pic').style.display = 'none';
+            });
+    }
 }
 
-const showUser = (/* possible params for adaptability */) => {
-    spotify.getMe()
-    .then(res => {
-        document.getElementById('display-name').innerHTML = res.display_name
-    })
-    .then(() => {
-        document.getElementById('hidden-header').style.color = "#e9e3d5";
-    });
-}
-
-const showPlayback = (/* possible params for adaptability */) => {
+const showPlayback = () => {
     spotify.getMyCurrentPlaybackState()
-    .then(res => {
-        document.getElementById('track-name').innerHTML = res.item.name;
-        document.getElementById('on').innerHTML = "on";
-        document.getElementById('album-name').innerHTML = res.item.album.name;
-        document.getElementById('by').innerHTML = "by";
-        document.getElementById('artist-name').innerHTML = res.item.artists[0].name;
-        document.getElementById('album-art').src = res.item.album.images[0].url
-    })
-    .then(() => {
-        document.getElementById('current-track').style.color = "#181818";
-        document.getElementById('album-art').style.border = "2px solid #181818";
-        document.getElementById('album-art').style.height = "30vh";
-    })
-    .catch(() => {
-        document.getElementById('current-track').style.color = "#181818";
-    })
+        .then(res => {
+            document.getElementById('current-track').innerHTML =
+                res.item.name.bold() 
+                + " on " + res.item.album.name.bold() 
+                + " by " + res.item.artists[0].name.bold();
+            document.getElementById('album-art').src = res.item.album.images[0].url
+        })
+        .then(() => {
+            document.getElementById('current-track').style.color = '#181818';
+            document.getElementById('album-art').setAttribute(
+                "style", 
+                "border: 2px solid #181818; height: 15vh"
+            );
+        })
+        .then(() => {
+            document.getElementById('pics-container').style.left = '0%';
+        })
+        .catch(() => {
+            document.getElementById('current-track').style.color = '#181818';
+            document.getElementById('album-art').style.display = 'none';
+        });
+}
+
+const showPlaylists = (userId) => {
+    spotify.getUserPlaylists(userId)
+        .then(res => {
+            res.items.forEach((item) => {
+                document.getElementById('playlist').innerHTML += item.name + '<br>';
+            });
+        });
 }
 
 spotify.setAccessToken(getHashParams().access_token);
 
-showUser();
-showPlayback();   
+addUser('me');
+showPlayback();
+
+document.getElementById('submit-user-id').addEventListener('click', (e) => {
+    e.preventDefault();
+    let userId = document.forms['add-user']['user-id'].value;
+    addUser(userId);
+});
 
 document.getElementById('logout').addEventListener('click', () => {
     window.location = '/index.html'; 

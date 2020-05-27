@@ -5,28 +5,43 @@
     </head>
     <body>
         <header>
-            <h1 id = "hidden-header"><span id = "display-name"></span>'s midl group</h1>
-            <p>
-                Welcome to your group! Add a friend to get started.
-            </p>
+            <h1 id = "hidden-header">
+                <span id = "display-name"></span>'s midl group
+            </h1>
+            <div>
+                <p>
+                    Welcome to your group! Add a friend to get started.
+                </p>
+            </div>
+            <div>
+                <form name = "add-user">
+                    User ID:
+                    <input type = "text" name = "user-id">
+                    <input id = "submit-user-id" type = "submit" value = "Add user">
+                </form>
+            </div>
         </header>
 
         <main>
+            <div id = "pics-bg">
+                <div id = "pics-container">
+                    <img class = "profile-pic" id = "my-pic"/>
+                    <img class = "profile-pic" id = "friend-pic"/>
+                </div>
+            </div>
             <div>
                 Now Playing: 
                 <span id = "current-track">
-                    <span class = "metadata" id = "track-name">Not currently listening to a track!</span>
-                    <span id = "on"></span>
-                    <span class = "metadata" id = "album-name"></span>
-                    <span id = "by"></span>
-                    <span class = "metadata" id = "artist-name"></span>
+                    Not currently listening to a track!
                 </span>
             </div>
             <div>
                 <img id = "album-art"/>
             </div>
-            <button id = "logout">Log out</button>
-            <p id = "debug"></p>
+            <div>
+                <button id = "logout">Log out</button>
+                <p id = "debug"></p>
+            </div>
         </main>
 
         <footer>
