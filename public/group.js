@@ -1,8 +1,8 @@
 // my user id -> 12169450242
 
-const MEMBER_LIMIT = 6;
+const MEMBER_LIMIT = 4;
 
-let SpotifyWebApi = require('../node_modules/spotify-web-api-js');
+let SpotifyWebApi = require('spotify-web-api-js');
 let spotify = new SpotifyWebApi();
 let members = [];
 
@@ -11,7 +11,6 @@ const addMe = () => {
         .then(res => {
             let user = {
                 id: res.id,
-                imgId: res.id + '-pic',
                 name: res.display_name,
                 pic: res.images[0].url
             };
@@ -46,7 +45,6 @@ const addUser = (id) => {
             .then(res => {
                 let user = {
                     id: userId,
-                    imgId: userId + '-pic',
                     name: res.display_name,
                     pic: res.images[0].url
                 };
@@ -61,6 +59,23 @@ const addUser = (id) => {
     }
 }
 
+const createPlaylist = (name = (members[0].name + '\'s midl playlist #' + generateTag()), isPublic, isCollaborative, description) => {
+    let playlistData = {
+        'name' : name,
+        'public' : isPublic,
+        'collaborative' : isCollaborative,
+        'description' : description
+    };
+
+    spotify.createPlaylist(members[0].id, playlistData)
+        .then(res => {
+            localStorage.setItem('playlist_id', playlistId);
+        })
+        .catch(err => {
+            document.getElementById('error-stack').innerHTML += 'ERROR: ' + err + '<br>';
+        });
+}
+
 const getHashParams = () => {
     let hashParams = {};
     let e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -71,64 +86,109 @@ const getHashParams = () => {
     return hashParams;
 }
 
-const showPlayback = () => {
-    spotify.getMyCurrentPlaybackState()
-        .then(res => {
-            document.getElementById('current-track').innerHTML =
-                res.item.name.bold() 
-                + " on " + res.item.album.name.bold() 
-                + " by " + res.item.artists[0].name.bold();
-            document.getElementById('album-art').src = res.item.album.images[0].url
-        })
-        .then(() => {
-            document.getElementById('current-track').style.color = '#181818';
-            document.getElementById('album-art').setAttribute(
-                "style", 
-                "border: 2px solid #181818; height: 150px"
-            );
-        })
-        .catch((err) => {
-            document.getElementById('error-stack').innerHTML += 'ERROR: ' + err + '<br>';
-            document.getElementById('current-track').style.color = '#181818';
-        });
+const generateTag = () => {
+    let ownerId = members[0].id;
+    let tag = 1;
+    
+    for (let i = 0; i < ownerId.length; i++) {
+        let num = ownerId.charCodeAt(i);
+
+        if (num > 0)
+            tag *= num;
+    }
+
+    let d = new Date();
+    let s = Math.round(d.getTime());
+    tag = Math.round((tag * (s / 100000)) % 10000)
+
+    document.getElementById('debug').innerHTML = tag;
+    
+    return tag;
 }
 
-const showPlaylists = (userId) => {
-    spotify.getUserPlaylists(userId)
-        .then(res => {
-            res.items.forEach(item => {
-                document.getElementById('playlist').innerHTML += item.name + '<br>';
-            });
-        });
+const removeUser = (userId) => {
+    let namesContainer = document.getElementById('names-container');
+    let picsContainer = document.getElementById('pics-container');
+
+    for (let i = 0; i < members.length; i++) {
+        let currUser = members[i];
+
+        if (currUser.id === userId) {
+            members.splice(i, 1);
+            namesContainer.removeChild(document.getElementById(currUser.id + '-text'));
+            picsContainer.removeChild(document.getElementById(currUser.id + '-img'));
+            picsContainer.removeChild(document.getElementById(currUser.id + '-remove'));
+            break;
+        }
+    }
+
+    sessionStorage.setItem('members', JSON.stringify(members));
 }
 
 const showUsersFrom = (i) => {
+    let currNameId = members[0].id + '-text';
     document.getElementById('display-name').innerHTML = members[0].name;
-    document.getElementById('pics-bg').style.color = "#181818";
 
     for (i; i < members.length; i++) {
+        let namesContainer = document.getElementById('names-container');
         let picsContainer = document.getElementById('pics-container');
+        let displayName = document.createElement('span');
         let profilePic = document.createElement('img');
 
-        profilePic.setAttribute(
-            'style', 
-            'height: 150px; width: 150px'
-        );
+        let currUser = members[i];
+        let currImgId = currUser.id + '-img';
+        currNameId = currUser.id + '-text';
 
-        profilePic.id = members[i].imgId;
-        profilePic.src = members[i].pic;
-        profilePic.title = members[i].name;
+        displayName.id = currNameId;
+        displayName.innerHTML = currUser.name;
+        displayName.classList.add('member-name');
+        namesContainer.appendChild(displayName);
+
+        setTimeout(() => {
+            profilePic.setAttribute(
+                'style', 
+                'height: 150px; width: 150px'
+            );
+        }, 20);
+
+        profilePic.id = currImgId;
+        profilePic.src = currUser.pic;
+        profilePic.href = members
         profilePic.classList.add('profile-pic');
         picsContainer.appendChild(profilePic);
 
-        document.getElementById('debug').innerHTML += members[i].name + "<br>";
+        if (i > 0) {
+            let removeIcon = document.createElement('img');
+
+            removeIcon.id = currUser.id + '-remove';
+            removeIcon.src = 'https://i.imgur.com/2Xs7AD1.png';
+            removeIcon.classList.add('remove-icon');
+
+            removeIcon.addEventListener('click', (e) => {
+                e.preventDefault();
+                removeUser(currUser.id);
+            });
+
+            picsContainer.appendChild(removeIcon);
+
+            setTimeout(() => {
+                removeIcon.style.opacity = '1';
+            }, 20);
+        }
     }
 
     document.getElementById('hidden-header').style.color = '#e9e3d5';
-    document.getElementById('pics-container').style.left = '0%';
-}
+    document.getElementById(currNameId).style.color = '#181818';
 
-/* Use group creator's access token from URL params to authorize API calls. */
+    setTimeout(() => {
+        document.getElementById('pics-container').style.left = '0%';
+        document.getElementById(currNameId).style.color = '#e9e3d5';
+        document.getElementById('names-container').setAttribute(
+            'style',
+            'color: #e9e3d5; font-size: larger'
+        );
+    }, 20);
+}
 
 spotify.setAccessToken(getHashParams().access_token);
 
@@ -140,18 +200,22 @@ else {
     showUsersFrom(0);
 }
 
-showPlayback();
+let playlistId = localStorage.getItem('playlist_id');
 
-/* Use Add User form's input to add member to group. */
-
-document.getElementById('submit-user-id').addEventListener('click', (e) => {
+document.getElementById('submit-profile-link').addEventListener('click', (e) => {
     e.preventDefault();
-    let userId = document.forms['add-user']['user-id'].value;
+    let userLink = (document.forms['add-friend']['profile-link'].value).split('/');
+    let userParams = userLink[userLink.length - 1].split('?');
+    let userId = userParams[0];
     addUser(userId);
 });
 
-/* Add listener to log out button */
-
 document.getElementById('logout').addEventListener('click', () => {
     window.location = '/index.html'; 
+});
+
+document.getElementById('make-playlist').addEventListener('click', () => {
+    createPlaylist();
+    // personalizePlaylist();
+    // showPlaylist();
 });

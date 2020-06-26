@@ -9,7 +9,7 @@ body {
     transition: 0.3s;
 }
 
-button, #submit-user-id {
+button, #submit-profile-link {
     background: #181818;
     border: 0;
     border-radius: 3px;
@@ -23,7 +23,7 @@ button, #submit-user-id {
     transition: 0.3s, margin 0s;
 }
 
-button:hover, #submit-user-id:hover {
+button:hover, #submit-profile-link:hover {
     background: #d68260;
     color: #181818;
     transition: 0.3s;
@@ -82,8 +82,9 @@ input {
     border-radius: 3px;
     color: #e9e3d5;
     font-size: large;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    height: auto;
+    padding-top: 15px;
+    padding-bottom: 10px;
     transition: 0.3s;
 }
 
@@ -103,11 +104,34 @@ input:hover {
     transition: 0.3s;
 }
 
+#make-playlist {
+    background-color: #9d270b;
+    color: #e9e3d5;
+    font-size: 50px;
+    width: 4em;
+}
+
+#make-playlist:hover {
+    background-color: #d68260;
+    color: #181818;
+    transition: 0.5s;
+    width: 5em;
+}
+
+#names-container {
+    font-family: 'Product Sans', Helvetica, sans-serif; 
+    font-size: 0;
+    margin-top: 8px;
+    padding-bottom: 8px;
+}
+
+
 #pics-bg {
     background: #181818;
-    /* height: 356px; */
     height: auto;
     margin: 0;
+    min-height: 210px;
+    min-width: 800px;
     transition: 0.3s;
 }
 
@@ -124,6 +148,27 @@ input:hover {
     transition: 0s;
 }
 
+.remove-icon {
+    position: relative;
+    margin-right: -30px;
+    height: 30px;
+    width: 30px;
+    top: -100px;
+    left: -25px;
+    opacity: 0;
+    transition: 0.1s, opacity 0.5s;
+}
+
+.remove-icon:hover {
+    cursor: pointer;
+    margin-right: -35px;
+    height: 35px;
+    width: 35px;
+    top: -97.5px;
+    left: -27.5px;
+    transition: 0.2s;
+}
+
 .external {
     color: #9d270b;
     text-decoration: none;
@@ -134,6 +179,14 @@ input:hover {
     transition: 0.2s;
 }
 
+.member-name {
+    display: inline-block; 
+    margin-right: 2vw; 
+    width: 150px; 
+    text-align: center; 
+    transition: 0s, color 0.5s, font-size 0.5s;
+}
+
 .profile-pic {
     border-radius: 50%;
     object-fit: cover;
@@ -141,10 +194,4 @@ input:hover {
     width: 0;
     margin-left: 2vw;
     margin-top: 12px;
-    margin-bottom: 8px;
-}
-
-.profile-pic:hover {
-    opacity: 50%;
-    transition: 0.3s;
 }
