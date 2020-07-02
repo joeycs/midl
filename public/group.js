@@ -1,5 +1,3 @@
-// my user id -> 12169450242
-
 const MEMBER_LIMIT = 4;
 
 let SpotifyWebApi = require('spotify-web-api-js');
@@ -59,9 +57,15 @@ const addUser = (id) => {
     }
 }
 
-const createPlaylist = (name = (members[0].name + '\'s midl playlist #' + generateTag()), isPublic, isCollaborative, description) => {
+const createPlaylist = (name, isPublic, isCollaborative, description) => {
+    let localName = name;
+
+    if (localName === '') {
+        localName = members[0].name + '\'s midl playlist #' + generateTag();
+    }
+
     let playlistData = {
-        'name' : name,
+        'name' : localName,
         'public' : isPublic,
         'collaborative' : isCollaborative,
         'description' : description
@@ -100,8 +104,6 @@ const generateTag = () => {
     let d = new Date();
     let s = Math.round(d.getTime());
     tag = Math.round((tag * (s / 100000)) % 10000)
-
-    document.getElementById('debug').innerHTML = tag;
     
     return tag;
 }
@@ -215,7 +217,10 @@ document.getElementById('logout').addEventListener('click', () => {
 });
 
 document.getElementById('make-playlist').addEventListener('click', () => {
-    createPlaylist();
+    createPlaylist(document.getElementById('playlist-name').value,
+                   document.getElementById('playlist-public').checked,
+                   document.getElementById('playlist-collab').checked,
+                   document.getElementById('playlist-desc').value);
     // personalizePlaylist();
     // showPlaylist();
 });

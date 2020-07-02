@@ -10,11 +10,17 @@
             </h2>
             <div>
                 <p>
-                    Welcome to your midl group! 
+                    Welcome to your midl group!
                     <br> 
-                    To get started, add a friend by providing their Spotify profile link or user ID below.
+                    <li>
+                        To get started, add a friend by providing their Spotify profile link or user ID below.
+                    </li>
                     <br>
-                    Then, click the midl button to generate your group's personalized playlist.
+                    <li>
+                        Once you're ready, click the 
+                        <span id = "fake-button">midl</span> 
+                        button to generate your group's personalized playlist.
+                    </li>
                 </p>
             </div>
             <div>
@@ -26,11 +32,33 @@
         </header>
 
         <main>
+            <h3>Group Members</h3>
             <div id = "pics-bg">
                 <div id = "pics-container"></div>
                 <div id = "names-container"></div>
             </div>
-            <div class = "centered">
+            <h3>Playlist Settings</h3>
+            <div id = "playlist-settings">
+                <div>
+                    <span>Name</span>
+                    <input class = "playlist-form" type = "text" id = "playlist-name">
+                </div>
+                <div>
+                    <span>Description</span>
+                    <input class = "playlist-form" type = "text" id = "playlist-desc">
+                </div>
+                <div class = "checkbox-container">
+                    <span>Public</span>
+                    <input type = "checkbox" id = "playlist-public">
+                    <span class = "select"></span>
+                </div>
+                <div class = "checkbox-container">
+                    <span>Collaborative</span>
+                    <input type = "checkbox" id = "playlist-collab">
+                    <span class = "select"></span>
+                </div>
+            </div>
+            <div style = "text-align: center;">
                 <div>
                     <button id = "make-playlist">midl</button>
                 </div>
@@ -47,7 +75,7 @@
         </main>
 
         <footer>
-            <div class = "centered">
+            <div style = "text-align: center;">
                 <hr>
                 <a class = "external" href = "https://github.com/joeycs/midl">
                     source code

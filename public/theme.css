@@ -1,7 +1,13 @@
+a, p, li {
+    color: #9d270b;
+    font-size: large;
+    white-space: nowrap;
+}
+
 body {
     background-color: #e9e3d5;
     color: #181818;
-    font-family: 'Open Sans', Helvetica, sans-serif;
+    font-family: 'Product Sans', Helvetica, sans-serif;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -23,7 +29,7 @@ button, #submit-profile-link {
     transition: 0.3s, margin 0s;
 }
 
-button:hover, #submit-profile-link:hover {
+button:hover, #fake-button:hover, #submit-profile-link:hover {
     background: #d68260;
     color: #181818;
     transition: 0.3s;
@@ -34,13 +40,17 @@ div {
     margin-right: 2vw;
     margin-bottom: 2vh;
     margin-top: 2vh;
+    position: relative;
 }
 
 h1, h2 {
     background-color: #181818;
-    font-family: 'Product Sans', Helvetica, sans-serif;
     padding-bottom: 8px;
     padding-top: 8px;
+}
+
+h2, h3 {
+    padding-left: 2vw;
 }
 
 h1 {
@@ -58,7 +68,11 @@ h1:hover {
 h2 {
     font-size: xx-large;
     transition: 0.5s, padding 0s;
-    padding-left: 2vw;
+}
+
+h3 {
+    font-size: x-large;
+    margin-bottom: 5px;
 }
 
 hr {
@@ -94,13 +108,15 @@ input:hover {
     transition: 0.3s;
 }
 
-#album-art {
-    border-radius: 3px;
-    height: 175px;
-}
-
-#current-track {
+#fake-button {
+    background-color: #9d270b; 
     color: #e9e3d5;
+    cursor: default;
+    border-radius: 2px;
+    padding-left: 0.8em;
+    padding-right: 0.8em;
+    padding-top: 0.1em;
+    padding-bottom: 0.1em;
     transition: 0.3s;
 }
 
@@ -119,7 +135,6 @@ input:hover {
 }
 
 #names-container {
-    font-family: 'Product Sans', Helvetica, sans-serif; 
     font-size: 0;
     margin-top: 8px;
     padding-bottom: 8px;
@@ -142,10 +157,72 @@ input:hover {
     transition: 0.5s;
 }
 
-.centered {
-    text-align: center;
-    top: 35vh;
-    transition: 0s;
+#playlist-settings {
+    background-color: #131313;
+    color: #e9e3d5;
+    font-size: larger;
+    padding: 5px;
+    margin: 0;
+}
+
+.checkbox-container input {
+    position: absolute;
+    cursor: pointer;
+    top: -3px;
+    left: 121px;
+    height: 25px;
+    width: 25px;
+    opacity: 0;
+    z-index: 1;
+}
+
+.checkbox-container input:hover ~ .select{
+    background-color: #d68260;
+}
+
+.checkbox-container input:checked ~ .select{
+    background-color: #9d270b;
+}
+
+.external {
+    color: #9d270b;
+    text-decoration: none;
+}
+
+.external:hover {
+    color: #d68260;
+    transition: 0.2s;
+}
+
+.member-name {
+    display: inline-block; 
+    margin-right: 2vw; 
+    width: 150px; 
+    text-align: center; 
+    transition: 0s, color 0.5s, font-size 0.5s;
+}
+
+.playlist-form {
+    position: absolute;
+    padding: 0;
+    height: 25px;
+    width: 500px;
+    left: 125px;
+    background-color: #e9e3d5;
+    color: #131313;
+}
+
+.playlist-form:hover {
+    background-color: #d68260;
+}
+
+.profile-pic {
+    border-radius: 50%;
+    object-fit: cover;
+    height: 0;
+    width: 0;
+    margin-left: 2vw;
+    margin-top: 12px;
 }
 
 .remove-icon {
@@ -169,29 +246,13 @@ input:hover {
     transition: 0.2s;
 }
 
-.external {
-    color: #9d270b;
-    text-decoration: none;
-}
-
-.external:hover {
-    color: #d68260;
-    transition: 0.2s;
-}
-
-.member-name {
-    display: inline-block; 
-    margin-right: 2vw; 
-    width: 150px; 
-    text-align: center; 
-    transition: 0s, color 0.5s, font-size 0.5s;
-}
-
-.profile-pic {
-    border-radius: 50%;
-    object-fit: cover;
-    height: 0;
-    width: 0;
-    margin-left: 2vw;
-    margin-top: 12px;
+.select {
+    position: absolute;
+    background-color: #e9e3d5;
+    border-radius: 3px;
+    top: 0px;
+    left: 125px;
+    height: 25px;
+    width: 25px;
+    transition: 0.3s;
 }
