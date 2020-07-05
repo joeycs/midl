@@ -1,7 +1,22 @@
-a, p, li {
+/* 1.4em = 25px */
+
+a {
+    color: #9d270b;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #d68260;
+    transition: 0.2s;
+}
+
+a, p, h1, h2, h3 {
+    white-space: nowrap;
+}
+
+a, p {
     color: #9d270b;
     font-size: large;
-    white-space: nowrap;
 }
 
 body {
@@ -16,16 +31,16 @@ body {
 }
 
 button, #submit-profile-link {
-    background: #181818;
+    background-color: #9d270b;
+    color: #e9e3d5;
     border: 0;
     border-radius: 3px;
-    color: #e9e3d5;
     cursor: pointer;
     font-family: 'Product Sans', Helvetica, sans-serif;
     font-size: x-large;
     height: auto;
     width: auto;
-    padding: 8px;
+    padding: 0.35em;
     transition: 0.3s, margin 0s;
 }
 
@@ -41,12 +56,41 @@ div {
     margin-bottom: 2vh;
     margin-top: 2vh;
     position: relative;
+    white-space: nowrap;
+}
+
+#dropdown-button {
+    position: relative;
+    cursor: pointer;
+    float: right;
+    top: -4.875em;
+}
+
+#dropdown-content {
+    background-color: #9d270b;
+    color: #e9e3d5;
+    border-radius: 3px;
+    font-size: large;
+    line-height: 2em;
+    position: absolute;
+    top: calc(-2vh - 1.11em);
+    right: -2vw;
+    padding: 0.8em;
+    width: 40em;
+    min-height: 30em;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    transition: 0.2s;
+    overflow: hidden;
+    white-space: normal;
+    opacity: 0;
+    z-index: -1;
 }
 
 h1, h2 {
     background-color: #181818;
-    padding-bottom: 8px;
-    padding-top: 8px;
+    padding-bottom: 0.25em;
+    padding-top: 0.25em;
+    padding-right: 2vw;
 }
 
 h2, h3 {
@@ -62,7 +106,7 @@ h1 {
 h1:hover {
     background-color: #9d270b;
     font-size: 7em;
-    margin-top: -15px;
+    margin-top: -0.15em;
 }
 
 h2 {
@@ -72,7 +116,7 @@ h2 {
 
 h3 {
     font-size: x-large;
-    margin-bottom: 5px;
+    margin-bottom: 0.25em;
 }
 
 hr {
@@ -97,19 +141,17 @@ input {
     color: #e9e3d5;
     font-size: large;
     height: auto;
-    padding-top: 15px;
-    padding-bottom: 10px;
-    transition: 0.3s;
+    padding-top: 0.825em;
+    padding-bottom: 0.55em;
 }
 
 input:hover {
     background: #d68260;
     color: #181818;
-    transition: 0.3s;
 }
 
 #fake-button {
-    background-color: #9d270b; 
+    background-color: #131313; 
     color: #e9e3d5;
     cursor: default;
     border-radius: 2px;
@@ -121,23 +163,19 @@ input:hover {
 }
 
 #make-playlist {
-    background-color: #9d270b;
-    color: #e9e3d5;
-    font-size: 50px;
+    font-size: 3em;
     width: 4em;
 }
 
 #make-playlist:hover {
-    background-color: #d68260;
-    color: #181818;
     transition: 0.5s;
     width: 5em;
 }
 
 #names-container {
     font-size: 0;
-    margin-top: 8px;
-    padding-bottom: 8px;
+    margin-top: 0.2em;
+    padding-bottom: 0.8em;
 }
 
 
@@ -145,8 +183,7 @@ input:hover {
     background: #181818;
     height: auto;
     margin: 0;
-    min-height: 210px;
-    min-width: 800px;
+    min-width: 45em;
     transition: 0.3s;
 }
 
@@ -154,24 +191,25 @@ input:hover {
     position: relative;
     left: -100%;
     margin: 0;
-    transition: 0.5s;
+    margin-left: 2vw;
+    transition: 0.5s, margin 0s;
 }
 
 #playlist-settings {
     background-color: #131313;
     color: #e9e3d5;
     font-size: larger;
-    padding: 5px;
+    padding: 0.2em;
     margin: 0;
 }
 
 .checkbox-container input {
     position: absolute;
     cursor: pointer;
-    top: -3px;
-    left: 121px;
-    height: 25px;
-    width: 25px;
+    top: -0.15em;
+    left: 6.7em;
+    height: 1.4em;
+    width: 1.4em;
     opacity: 0;
     z-index: 1;
 }
@@ -184,20 +222,11 @@ input:hover {
     background-color: #9d270b;
 }
 
-.external {
-    color: #9d270b;
-    text-decoration: none;
-}
-
-.external:hover {
-    color: #d68260;
-    transition: 0.2s;
-}
-
 .member-name {
-    display: inline-block; 
-    margin-right: 2vw; 
-    width: 150px; 
+    display: inline-block;
+    margin-left: 0.16em;
+    margin-right: 1em;
+    width: 7.5em; 
     text-align: center; 
     transition: 0s, color 0.5s, font-size 0.5s;
 }
@@ -205,9 +234,9 @@ input:hover {
 .playlist-form {
     position: absolute;
     padding: 0;
-    height: 25px;
-    width: 500px;
-    left: 125px;
+    height: 1.4em;
+    width: 28em;
+    left: 7em;
     background-color: #e9e3d5;
     color: #131313;
 }
@@ -221,28 +250,28 @@ input:hover {
     object-fit: cover;
     height: 0;
     width: 0;
-    margin-left: 2vw;
-    margin-top: 12px;
+    margin-right: 1em;
+    margin-top: 1em;
 }
 
 .remove-icon {
     position: relative;
-    margin-right: -30px;
-    height: 30px;
-    width: 30px;
-    top: -100px;
-    left: -25px;
+    margin-right: -1.75em;
+    height: 1.75em;
+    width: 1.75em;
+    top: -6em;
+    left: -2.5em;
     opacity: 0;
-    transition: 0.1s, opacity 0.5s;
+    transition: 0.05s, opacity 0.5s;
 }
 
 .remove-icon:hover {
     cursor: pointer;
-    margin-right: -35px;
-    height: 35px;
-    width: 35px;
-    top: -97.5px;
-    left: -27.5px;
+    margin-right: -2.25em;
+    height: 2.25em;
+    width: 2.25em;
+    top: -5.75em;
+    left: -2.75em;
     transition: 0.2s;
 }
 
@@ -250,9 +279,9 @@ input:hover {
     position: absolute;
     background-color: #e9e3d5;
     border-radius: 3px;
-    top: 0px;
-    left: 125px;
-    height: 25px;
-    width: 25px;
+    top: 0em;
+    left: 6.55em;
+    height: 1.4em;
+    width: 1.4em;
     transition: 0.3s;
 }

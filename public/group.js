@@ -203,6 +203,20 @@ else {
 }
 
 let playlistId = localStorage.getItem('playlist_id');
+let helpOpen = false;
+
+document.getElementById('dropdown-button').addEventListener('click', () => {
+    if (helpOpen) {
+        document.getElementById('dropdown-content').style.opacity = '0';
+        document.getElementById('dropdown-content').style.zIndex = '-1';
+        helpOpen = false;
+    }
+    else {
+        document.getElementById('dropdown-content').style.opacity = '1';
+        document.getElementById('dropdown-content').style.zIndex = '1';
+        helpOpen = true;
+    }
+});
 
 document.getElementById('submit-profile-link').addEventListener('click', (e) => {
     e.preventDefault();
