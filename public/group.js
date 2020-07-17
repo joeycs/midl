@@ -1,8 +1,9 @@
-const MEMBER_LIMIT = 4;
+const MEMBER_LIMIT = 5;
 
 let SpotifyWebApi = require('spotify-web-api-js');
 let spotify = new SpotifyWebApi();
 let members = [];
+var notifTimeout;
 
 const addMe = () => {
     spotify.getMe()
@@ -10,15 +11,23 @@ const addMe = () => {
             let user = {
                 id: res.id,
                 name: res.display_name,
-                pic: res.images[0].url
+                pic: res.images[0].url,
+                tracksTotal: 0
             };
 
-            members.push(user);
-            sessionStorage.setItem('members', JSON.stringify(members));
-            showUsersFrom(members.length - 1);
+            spotify.getMySavedTracks({'limit': 1, 'offset': 0})
+                .then(tracks => {
+                    user.tracksTotal = tracks.total;
+                    members.push(user);
+                    sessionStorage.setItem('members', JSON.stringify(members));
+                    showUsersFrom(members.length - 1);
+                })
+                .catch(err => {
+                    alert(err.response);
+                });
         })
-        .catch((err) => {
-            document.getElementById('error-stack').innerHTML += 'ERROR: ' + err + '<br>';
+        .catch(err => {
+            alert('ERROR: ' + err.response.status + ': ' + err.response.message);
         });
 }
 
@@ -32,11 +41,11 @@ const addUser = (id) => {
         }
     });
 
-    if (members.length >= MEMBER_LIMIT) {
-        document.getElementById('error-stack').innerHTML += 'ERROR: group full' + '<br>';
+    if (memberInGroup) {
+        showNotification('Looks like that user is already in your group!');
     }
-    else if (memberInGroup) {
-        document.getElementById('error-stack').innerHTML += 'ERROR: member already in group' + '<br>';
+    else if (members.length >= MEMBER_LIMIT) {
+        showNotification('Your group is full!');
     }
     else {
         spotify.getUser(userId)
@@ -44,39 +53,98 @@ const addUser = (id) => {
                 let user = {
                     id: userId,
                     name: res.display_name,
-                    pic: res.images[0].url
+                    pic: res.images[0].url,
+                    tracks: []
                 };
 
-                members.push(user);
-                sessionStorage.setItem('members', JSON.stringify(members));
-                showUsersFrom(members.length - 1);
+                spotify.getUserPlaylists(userId)
+                    .then(playlists => {
+
+                        playlists.items.forEach(playlist => {
+                            spotify.getPlaylistTracks(playlist.id)
+                                .then(res => {
+
+                                    res.items.forEach(item => {
+                                        if (!user.tracks.includes(item.track.uri)) {
+                                            user.tracks.push(item.track.uri);
+                                        }
+                                    });
+
+                                })
+                                .catch(err => {
+                                    alert(err.response);
+                                });
+
+                        });
+
+                        members.push(user);
+                        sessionStorage.setItem('members', JSON.stringify(members));
+                        showUsersFrom(members.length - 1);
+                    })
+                    .catch(err => {
+                        alert(err.response);
+                    });
             })
-            .catch((err) => {
-                document.getElementById('error-stack').innerHTML += 'ERROR: user does not exist' + '<br>';
+            .catch(() => {
+                showNotification('You\'ve entered an invalid profile link or user ID!');
             });
     }
 }
 
-const createPlaylist = (name, isPublic, isCollaborative, description) => {
-    let localName = name;
+const fillPlaylist = (playlistId) => {
+    let i = 0, tracksAdded = 0;
+    let matchedTracks = [];
+    var currTrack, currMember, currOffset;
 
-    if (localName === '') {
-        localName = members[0].name + '\'s midl playlist #' + generateTag();
+    while (i < 100 && tracksAdded < 50) {
+        currOffset = getRandomInt(0, members[0].tracksTotal - 50)
+
+        spotify.getMySavedTracks({'limit': 50, 'offset': currOffset})
+            .then(myTracks => {
+
+                for (let j = 0; j < 50 && tracksAdded < 50; j++) {
+                    currTrack = myTracks.items[j].track.uri;
+                    currMember = members[(j % (members.length - 1)) + 1];
+
+                    for (let k = 0; k < currMember.tracks.length; k++) {
+                        if (currMember.tracks[k] === currTrack && (!matchedTracks.includes(currTrack))) {
+                            matchedTracks.push(currMember.tracks[k]);
+                            tracksAdded++;
+                            break;
+                        }
+                    }
+                }
+
+            })
+            .catch(err => {
+                alert(err.response);
+            });
+
+        i++;
     }
 
-    let playlistData = {
-        'name' : localName,
-        'public' : isPublic,
-        'collaborative' : isCollaborative,
-        'description' : description
-    };
+    if (matchedTracks.length < 50) {
+        //
+    }
 
-    spotify.createPlaylist(members[0].id, playlistData)
+    setTimeout(() => {
+        spotify.addTracksToPlaylist(playlistId, matchedTracks)
+            .then(() => {})
+            .catch(err => {
+                alert(err.response);
+            });
+    }, 500);
+};
+
+const findPlaylist = (name) => {
+    spotify.getUserPlaylists()
         .then(res => {
-            localStorage.setItem('playlist_id', playlistId);
-        })
-        .catch(err => {
-            document.getElementById('error-stack').innerHTML += 'ERROR: ' + err + '<br>';
+            for (let i = 0; i < res.items.length; i++) {
+                if (res.items[i].name === name) {
+                    sessionStorage.setItem('takenName', res.items[i].name);
+                    break;
+                }
+            }
         });
 }
 
@@ -90,22 +158,52 @@ const getHashParams = () => {
     return hashParams;
 }
 
-const generateTag = () => {
-    let ownerId = members[0].id;
-    let tag = 1;
-    
-    for (let i = 0; i < ownerId.length; i++) {
-        let num = ownerId.charCodeAt(i);
+const getRandomInt = (min, max) => {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+};
 
-        if (num > 0)
-            tag *= num;
+const makePlaylist = (name, isPublic, isCollaborative, description) => {
+    let localName = name;
+    let nameTaken = false;
+    let nameTakenMsg = 'You already have a playlist with that name!';
+
+    if (localName === '') {
+        localName = members[0].name + '\'s midl Playlist';
+        nameTakenMsg = 'You already have a playlist with the default name!'
     }
 
-    let d = new Date();
-    let s = Math.round(d.getTime());
-    tag = Math.round((tag * (s / 100000)) % 10000)
-    
-    return tag;
+    findPlaylist(localName);
+
+    setTimeout(() => {
+        nameTaken = sessionStorage.getItem('takenName') !== null;
+
+        if (nameTaken) {
+            showNotification(nameTakenMsg);
+        }
+        else {
+            let playlistData = {
+                'name': localName,
+                'public': isPublic,
+                'collaborative': isCollaborative,
+                'description': description
+            };
+
+            spotify.createPlaylist(members[0].id, playlistData)
+                .then((res) => {
+                    fillPlaylist(res.id);
+                    //showPlaylist();
+                    showNotification('"' + localName + '" has been saved to your library!')
+                })
+                .catch(err => {
+                    alert(err.response);
+                });
+        }
+
+    }, 150);
+
+    sessionStorage.removeItem('takenName');
 }
 
 const removeUser = (userId) => {
@@ -126,6 +224,27 @@ const removeUser = (userId) => {
 
     sessionStorage.setItem('members', JSON.stringify(members));
 }
+
+const showNotification = (msg) => {
+    clearTimeout(notifTimeout);
+    document.getElementById('notification').innerHTML = msg;
+
+    document.getElementById('notification').setAttribute(
+        'style',
+        'z-index: 1; right: -0.225em; transition: 0.5s'
+    );
+
+    notifTimeout = setTimeout(() => {
+        document.getElementById('notification').setAttribute(
+            'style',
+            'z-index: 0; right: -15em; transition: 0.3s'
+        );
+    }, 3000);
+}
+
+const showPlaylist = () => {
+
+};
 
 const showUsersFrom = (i) => {
     let currNameId = members[0].id + '-text';
@@ -149,7 +268,7 @@ const showUsersFrom = (i) => {
         setTimeout(() => {
             profilePic.setAttribute(
                 'style', 
-                'height: 150px; width: 150px'
+                'height: 9.375em; width: 9.375em'
             );
         }, 20);
 
@@ -163,8 +282,15 @@ const showUsersFrom = (i) => {
             let removeIcon = document.createElement('img');
 
             removeIcon.id = currUser.id + '-remove';
-            removeIcon.src = 'https://i.imgur.com/2Xs7AD1.png';
+            removeIcon.src = 'https://i.imgur.com/SuiuFIj.png';
             removeIcon.classList.add('remove-icon');
+
+            removeIcon.addEventListener('mouseover', () => {
+                removeIcon.style.opacity = '0.75';
+            });
+            removeIcon.addEventListener('mouseleave', () => {
+                removeIcon.style.opacity = '1';
+            });
 
             removeIcon.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -184,11 +310,8 @@ const showUsersFrom = (i) => {
 
     setTimeout(() => {
         document.getElementById('pics-container').style.left = '0%';
+        document.getElementById('names-container').style.color = '#e9e3d5';
         document.getElementById(currNameId).style.color = '#e9e3d5';
-        document.getElementById('names-container').setAttribute(
-            'style',
-            'color: #e9e3d5; font-size: larger'
-        );
     }, 20);
 }
 
@@ -202,7 +325,6 @@ else {
     showUsersFrom(0);
 }
 
-let playlistId = localStorage.getItem('playlist_id');
 let helpOpen = false;
 
 document.getElementById('dropdown-button').addEventListener('click', () => {
@@ -230,11 +352,19 @@ document.getElementById('logout').addEventListener('click', () => {
     window.location = '/index.html'; 
 });
 
-document.getElementById('make-playlist').addEventListener('click', () => {
-    createPlaylist(document.getElementById('playlist-name').value,
-                   document.getElementById('playlist-public').checked,
-                   document.getElementById('playlist-collab').checked,
-                   document.getElementById('playlist-desc').value);
-    // personalizePlaylist();
-    // showPlaylist();
+document.getElementById('midl-button').addEventListener('click', () => {
+    document.getElementById('midl-button').disabled = true;
+    setTimeout(() => {
+        document.getElementById('midl-button').disabled = false;
+    }, 1500);
+
+    if (members.length > 1) {
+        makePlaylist(document.getElementById('playlist-name').value,
+                    document.getElementById('playlist-public').checked,
+                    document.getElementById('playlist-collab').checked,
+                    document.getElementById('playlist-desc').value);
+    }
+    else {
+        showNotification('Add some friends to your group first!')
+    }
 });
