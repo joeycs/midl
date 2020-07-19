@@ -234,7 +234,7 @@ const showNotification = (msg) => {
     notifTimeout = setTimeout(() => {
         document.getElementById('notification').setAttribute(
             'style',
-            'z-index: 0; right: -15em; transition: 0.3s'
+            'z-index: 0; right: -16em; transition: 0.3s'
         );
     }, 3000);
 }
@@ -369,8 +369,5 @@ document.getElementById('midl-button').addEventListener('click', () => {
 while (true) {
     document.getElementById('loading').childNodes.forEach(child => {
         child.style.fontSize = '7em';
-        setTimeout(() => {
-            child.style.fontSize = '5em';
-        }, 1000);
     });
 }

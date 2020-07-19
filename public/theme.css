@@ -152,7 +152,6 @@ input:hover {
     text-align: center;
     height: 3em;
     line-height: 2.75em;
-    background-color: magenta;
 }
 
 #loading span {
@@ -180,7 +179,7 @@ input:hover {
 #notification {
     position: absolute;
     top: 34em;
-    right: -15em;
+    right: -16em;
     height: auto;
     width: 10em;
     padding: 1em;
