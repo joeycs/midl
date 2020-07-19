@@ -148,7 +148,6 @@ input:hover {
 }
 
 #notification {
-    display: none;
     position: absolute;
     top: 34em;
     right: -15em;
