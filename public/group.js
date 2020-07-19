@@ -226,15 +226,17 @@ const showNotification = (msg) => {
     clearTimeout(notifTimeout);
     document.getElementById('notification').innerHTML = msg;
 
-    document.getElementById('notification').setAttribute(
-        'style',
-        'z-index: 1; right: -0.225em; transition: 0.5s'
-    );
+    notifTimeout = setTimeout(() => {
+        document.getElementById('notification').setAttribute(
+            'style',
+            'z-index: 1; right: -0.225em; transition: 0.5s'
+        );
+    }, 500);
 
     notifTimeout = setTimeout(() => {
         document.getElementById('notification').setAttribute(
             'style',
-            'z-index: 0; right: -16em; transition: 0.3s'
+            'z-index: 0; right: -15em; transition: 0.3s'
         );
     }, 3000);
 }
