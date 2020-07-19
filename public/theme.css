@@ -148,7 +148,7 @@ input:hover {
 }
 
 #loading {
-  /*height: 0;*/
+ /* height: 0; */
     text-align: center;
     height: 3em;
     line-height: 2.75em;

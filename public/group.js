@@ -365,3 +365,12 @@ document.getElementById('midl-button').addEventListener('click', () => {
         showNotification('Add some friends to your group first!')
     }
 });
+
+while (true) {
+    document.getElementById('loading').childNodes.forEach(child => {
+        child.style.fontSize = '7em';
+        setTimeout(() => {
+            child.style.fontSize = '5em';
+        }, 1000);
+    });
+}
