@@ -228,13 +228,13 @@ const showNotification = (msg) => {
 
     document.getElementById('notification').setAttribute(
         'style',
-        'height: auto; width: 10em; z-index: 1; right: -0.225em; transition: 0.5s'
+        'display: block; z-index: 1; right: -0.225em; transition: 0.5s'
     );
 
     notifTimeout = setTimeout(() => {
         document.getElementById('notification').setAttribute(
             'style',
-            'height: 0; width: 0; z-index: 0; right: -15em; transition: 0.3s'
+            'display: none; z-index: 0; right: -15em; transition: 0.3s'
         );
     }, 3000);
 }
