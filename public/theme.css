@@ -147,17 +147,6 @@ input:hover {
     z-index: -1;
 }
 
-#loading {
- /* height: 0; */
-    text-align: center;
-    height: 3em;
-    line-height: 2.75em;
-}
-
-#loading span {
-    font-size: 5em;
-}
-
 #midl-button {
     font-size: 3em;
     width: 4em;

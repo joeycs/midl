@@ -226,12 +226,10 @@ const showNotification = (msg) => {
     clearTimeout(notifTimeout);
     document.getElementById('notification').innerHTML = msg;
 
-    notifTimeout = setTimeout(() => {
-        document.getElementById('notification').setAttribute(
-            'style',
-            'z-index: 1; right: -0.225em; transition: 0.5s'
-        );
-    }, 500);
+    document.getElementById('notification').setAttribute(
+        'style',
+        'z-index: 1; right: -0.225em; transition: 0.5s'
+    );
 
     notifTimeout = setTimeout(() => {
         document.getElementById('notification').setAttribute(
@@ -367,9 +365,3 @@ document.getElementById('midl-button').addEventListener('click', () => {
         showNotification('Add some friends to your group first!')
     }
 });
-
-while (true) {
-    document.getElementById('loading').childNodes.forEach(child => {
-        child.style.fontSize = '7em';
-    });
-}
