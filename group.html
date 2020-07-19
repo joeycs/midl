@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+    <head>
+        <title>midl</title>
+        <link rel = "stylesheet" href = "theme.css">
+    </head>
+    <body>
+        <header>
+            <h2 id = "hidden-header">
+                <span id = "display-name"></span>'s midl Group
+            </h2>
+            
+            <div>
+                <img id = "dropdown-button" src = "https://i.imgur.com/ddGeYaS.png"/>
+                <div id = "dropdown-content">
+                    To add a user to your group, enter their Spotify profile link
+                    or user ID into the form located near the top of the page.
+                    <br><br>
+                    <span class = "highlight" >How to find a user's profile link or user ID</span>
+                    <ul>
+                        <li>Navigate to their profile page in the Spotify desktop or mobile app</li>
+                        <li>
+                            Click or tap the 
+                            <span class = "highlight">&nbsp;&CenterDot;&nbsp;&CenterDot;&nbsp;&CenterDot;&nbsp;</span>
+                            icon (located in the top right corner on mobile 
+                            or to the right of the follow button in the desktop app)
+                        </li>
+                        <li>
+                            Mouse over or tap 
+                            <span class = "highlight">Share</span>
+                            in the dropdown menu
+                        </li>
+                        <li>
+                            Click or tap 
+                            <span class = "highlight">Copy Link</span>
+                            on mobile or 
+                            <span class = "highlight">Copy Profile Link</span>
+                            in the desktop app to copy their profile link to your clipboard
+                        </li>
+                        <li>
+                            If you're using the desktop app, you can click 
+                            <span class = "highlight">Copy Spotify URI</span>
+                            under the
+                            <span class = "highlight">Share</span> 
+                            dropdown menu; the user's ID can be found in their Spotify URI </li>
+                            e.g. <span class = "highlight">spotify:user:MyUserID</span>
+                    </ul>
+                    Alternatively, users who have signed up with a custom user ID can be added
+                    by simply entering this ID into the form.
+                    <br>
+                    When you've finished adding users to your group, click the 
+                    <span class = "highlight">midl</span>
+                    button to generate your group's personalized playlist!
+                </div>
+            </div>
+            <div style = "height: 2.35em">
+                <form name = "add-friend">
+                    <input type = "text" name = "profile-link">
+                    <input id = "submit-profile-link" type = "image" src = "https://i.imgur.com/iltGrgi.png">
+                </form>
+            </div>
+        </header>
+
+        <main>
+            <h3>Group Members</h3>
+            <div id = "pics-bg">
+                <div id = "pics-container"></div>
+                <div id = "names-container"></div>
+            </div>
+            <h3>Playlist Settings</h3>
+            <div id = "playlist-settings">
+                <div>
+                    <span>Name</span>
+                    <input class = "playlist-form" type = "text" id = "playlist-name">
+                </div>
+                <div>
+                    <span>Description</span>
+                    <input class = "playlist-form" type = "text" id = "playlist-desc">
+                </div>
+                <div class = "checkbox-container">
+                    <span>Public</span>
+                    <input type = "checkbox" id = "playlist-public">
+                    <span class = "select"></span>
+                </div>
+                <div class = "checkbox-container">
+                    <span>Collaborative</span>
+                    <input type = "checkbox" id = "playlist-collab">
+                    <span class = "select"></span>
+                </div>
+            </div>
+            <div style = "text-align: center;">
+                <div>
+                    <button id = "midl-button">midl</button>
+                </div>
+                <div>
+                    <button id = "logout">Log out</button>
+                    <p id = "debug">
+                    </p>
+                </div>
+            </div>
+            <div id = "notification">  
+            </div>
+        </main>
+
+        <footer style = "text-align: center; color: #9d270b">
+            <hr>
+            <a href = "https://github.com/joeycs/midl">Source Code</a>
+            &nbsp;&CenterDot;&nbsp;
+            <a href = "https://github.com/JMPerez/spotify-web-api-js">Spotify Web API</a>
+            &nbsp;&CenterDot;&nbsp;
+            <a href = "https://icons8.com/icon/84097/help">Help Icon by icons8</a>
+            &nbsp;&CenterDot;&nbsp;
+            <a href = "https://icons8.com/icon/85484/add-user-male">Add User Male Icon by Icons8</a>
+        </footer>
+        <script src = "bundle.js"></script>
+    </body>
+</html>
