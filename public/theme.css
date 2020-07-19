@@ -148,7 +148,13 @@ input:hover {
 }
 
 #loading {
-    display: none;
+    /*display: none;*/
+    height: 10em;
+    font-size: 5em;
+}
+
+#loading span {
+    position: absolute;
 }
 
 #midl-button {
