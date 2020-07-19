@@ -148,13 +148,15 @@ input:hover {
 }
 
 #loading {
-    /*display: none;*/
-    height: 10em;
-    font-size: 5em;
+  /*height: 0;*/
+    text-align: center;
+    height: 3em;
+    line-height: 2.75em;
+    background-color: magenta;
 }
 
 #loading span {
-    
+    font-size: 5em;
 }
 
 #midl-button {
