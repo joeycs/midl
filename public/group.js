@@ -123,11 +123,9 @@ const fillPlaylist = (playlistId) => {
         i++;
     }
 
-    if (matchedTracks.length < 50) {
-        //
-    }
-
     setTimeout(() => {
+        showPlaylist(matchedTracks);
+
         spotify.addTracksToPlaylist(playlistId, matchedTracks)
             .then(() => {})
             .catch(err => {
@@ -193,7 +191,6 @@ const makePlaylist = (name, isPublic, isCollaborative, description) => {
             spotify.createPlaylist(members[0].id, playlistData)
                 .then((res) => {
                     fillPlaylist(res.id);
-                    //showPlaylist();
                     showNotification('"' + localName + '" has been saved to your library!')
                 })
                 .catch(err => {
@@ -231,18 +228,18 @@ const showNotification = (msg) => {
 
     document.getElementById('notification').setAttribute(
         'style',
-        'z-index: 1; right: -0.225em; transition: 0.5s'
+        'height: auto; width: 10em; z-index: 1; right: -0.225em; transition: 0.5s'
     );
 
     notifTimeout = setTimeout(() => {
         document.getElementById('notification').setAttribute(
             'style',
-            'z-index: 0; right: -15em; transition: 0.3s'
+            'height: 0; width: 0; z-index: 0; right: -15em; transition: 0.3s'
         );
     }, 3000);
 }
 
-const showPlaylist = () => {
+const showPlaylist = (tracks) => {
 
 };
 

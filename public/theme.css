@@ -148,11 +148,12 @@ input:hover {
 }
 
 #notification {
+    height: 0;
+    width: 0;
     position: absolute;
     top: 34em;
     right: -15em;
     height: auto;
-    width: 10em;
     padding: 1em;
     background-color: #9d270b;
     color: #e9e3d5;
