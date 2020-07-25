@@ -114,6 +114,11 @@ input:hover {
     transition: 0.1s;
 }
 
+#debug {
+    white-space: normal;
+    height: auto;
+}
+
 #dropdown-button {
     position: relative;
     cursor: pointer;
@@ -146,6 +151,73 @@ input:hover {
     opacity: 0;
     z-index: -1;
 }
+
+#lds-ellipsis {
+    transition: 0.2s;
+    display: none;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0;
+}
+
+#lds-ellipsis div {
+    position: absolute;
+    top: 33px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #131313;
+    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+    margin: 0;
+}
+
+#lds-ellipsis div:nth-child(1) {
+    left: 8px;
+    animation: lds-ellipsis1 0.6s infinite;
+}
+
+#lds-ellipsis div:nth-child(2) {
+    left: 8px;
+    animation: lds-ellipsis2 0.6s infinite;
+}
+
+#lds-ellipsis div:nth-child(3) {
+    left: 32px;
+    animation: lds-ellipsis2 0.6s infinite;
+}
+
+#lds-ellipsis div:nth-child(4) {
+    left: 56px;
+    animation: lds-ellipsis3 0.6s infinite;
+}
+
+@keyframes lds-ellipsis1 {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes lds-ellipsis3 {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(0);
+    }
+}
+
+@keyframes lds-ellipsis2 {
+    0% {
+        transform: translate(0, 0);
+    }
+    100% {
+        transform: translate(24px, 0);
+    }
+} 
 
 #midl-button {
     font-size: 3em;
@@ -197,6 +269,11 @@ input:hover {
     left: -100em;
     margin-bottom: 0.5em;
     transition: 0.75s, margin 0s;
+}
+
+#playlist {
+    background-color: #131313;
+    height: auto;
 }
 
 #playlist-settings {
