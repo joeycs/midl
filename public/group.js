@@ -290,7 +290,7 @@ const fillPlaylist = (playlistId) => {
         </tr>
     `;
 
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 15; i++) {
         spotify.getMySavedTracks({
             "limit": 50, 
             "offset": getRandomInt(0, members[0].tracksTotal - 50)
