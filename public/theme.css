@@ -17,6 +17,35 @@ p {
     font-size: 1.125em;
 }
 
+table {
+    width: 100%;
+    background-color: #181818;
+    border-radius: 5px;
+    border-collapse: collapse;
+    transition: 0.3s;
+}
+
+td, th {
+    color: #e9e3d5;
+    padding: 0.5em;
+}
+
+td {
+    text-align: left;
+    font-size: 1em;
+}
+
+th {
+    background-color: #9d270b;
+    text-align: center;
+    font-size: 1.25em;
+    padding: 0.5em;
+}
+  
+tr:nth-child(even) {
+    background-color: black;
+}
+
 body {
     background-color: #e9e3d5;
     color: #181818;
@@ -272,8 +301,29 @@ input:hover {
 }
 
 #playlist {
-    background-color: #131313;
-    height: auto;
+    display: none;
+    white-space: normal;
+    margin: 0;
+    padding-left: 5em;
+    padding-right: 5em;
+}
+
+#playlist-header {
+    padding: 0;
+}
+
+#playlist-link {
+    color: #181818;
+    border-radius: 3px;
+    padding: 1em;
+    margin-top: 1em;
+    transition: 0.2s;
+}
+
+#playlist-link:hover {
+    background-color: #181818;
+    color: #e9e3d5;
+    transition: 0.2s;
 }
 
 #playlist-settings {
@@ -295,6 +345,16 @@ input:hover {
 
 #submit-profile-link {
     left: 11em;
+}
+
+.album-art {
+    height: 3em;
+    border-radius: 3px;
+    transition: 0.2s;
+}
+
+.album-art:hover {
+    opacity: 0.5;
 }
 
 .checkbox-container input {

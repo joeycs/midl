@@ -130,7 +130,8 @@ const removeUser = (userId) => {
 
 const showMembersFrom = (i) => {
     let currNameId = members[0].id + "-text";
-    document.getElementById("display-name").innerHTML = members[0].name;
+    document.getElementsByClassName("display-name")[0].innerHTML = members[0].name;
+    document.getElementsByClassName("display-name")[1].innerHTML = members[0].name;
 
     for (i; i < members.length; i++) {
         let namesContainer = document.getElementById("names-container");
@@ -156,7 +157,6 @@ const showMembersFrom = (i) => {
 
         profilePic.id = currImgId;
         profilePic.src = currUser.pic;
-        profilePic.href = members
         profilePic.classList.add("profile-pic");
         picsContainer.appendChild(profilePic);
 
@@ -245,13 +245,14 @@ const makePlaylist = (name, isPublic, isCollaborative, description, _callback) =
             };
 
             spotify.createPlaylist(members[0].id, playlistData)
-                .then((res) => {
+                .then(res => {
+                    document.getElementById("playlist-link").href = res.external_urls["spotify"];
+
                     fillPlaylist(res.id);
                     showNotification("\"" + localName + "\" has been saved to your library!");
                 })
                 .catch(() => {
                     document.getElementById("lds-ellipsis").style.display = "none";
-                    showNotification("We couldn't create your playlist as Spotify's servers are too busy. Please try again later.")
                 });
         }
 
@@ -277,6 +278,16 @@ const fillPlaylist = (playlistId) => {
     matchedTracks = [];
     tracksAdded = 0;
 
+    document.getElementById("playlist").style.display = "none";
+    document.getElementById("playlist-table").innerHTML = `
+        <tr>
+            <th></th>
+            <th>Track</th>
+            <th>Album</th>
+            <th>Artists</th>
+        </tr>
+    `;
+
     for (let i = 0; i < 10 && tracksAdded < 50; i++) {
         spotify.getMySavedTracks({
             "limit": 50, 
@@ -300,6 +311,7 @@ const fillPlaylist = (playlistId) => {
 
         spotify.addTracksToPlaylist(playlistId, matchedTracks)
             .then(() => {
+                document.getElementById("playlist").style.display = "block";
                 document.getElementById("lds-ellipsis").style.display = "none";
             })
             .catch(() => {
@@ -350,7 +362,41 @@ const findMatch = (track) => {
 }
 
 const showTrack = (track) => {
-    document.getElementById('debug').innerHTML += track.name + '<br>';
+    let table = document.getElementById("playlist-table");
+    let trackRow = document.createElement("tr");
+    let albumArtCell = document.createElement("td");
+    let trackNameCell = document.createElement("td");
+    let albumNameCell = document.createElement("td");
+    let artistNameCell = document.createElement("td");
+    let albumArt = document.createElement("img");
+    let playlistLink = document.createElement("a");
+    let trackLink = document.createElement("a");
+
+    albumArt.src = track.album.images[0].url;
+    albumArt.classList.add("album-art");
+
+    trackLink.href = track.external_urls["spotify"];
+    trackLink.append(albumArt);
+    albumArtCell.append(trackLink);
+
+    //playlistLink.href = ;
+
+    trackNameCell.innerHTML = track.name;
+    albumNameCell.innerHTML = track.album.name;
+
+    for (let i = 0; i < track.album.artists.length; i++) {
+        artistNameCell.innerHTML += track.album.artists[i].name;
+
+        if (i < track.album.artists.length - 1) {
+            artistNameCell.innerHTML += ', ';
+        }
+    }
+
+    trackRow.appendChild(albumArtCell);
+    trackRow.appendChild(trackNameCell);
+    trackRow.appendChild(albumNameCell);
+    trackRow.appendChild(artistNameCell);
+    table.appendChild(trackRow);
 }
 
 const getHashParams = () => {
@@ -418,11 +464,17 @@ document.getElementById("submit-profile-link").addEventListener("click", (e) => 
 });
 
 document.getElementById("logout").addEventListener("click", () => {
+    sessionStorage.removeItem("members");
     window.location = "/index.html"; 
 });
 
 document.getElementById("midl-button").addEventListener("click", () => {
     document.getElementById("midl-button").disabled = true;
+
+    if (document.getElementById("playlist-name").value !== "") {
+        document.getElementById("playlist-header").innerHTML = 
+            document.getElementById("playlist-name").value;
+    }
 
     if (members.length > 1) {
         makePlaylist(document.getElementById("playlist-name").value,

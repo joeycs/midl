@@ -6,7 +6,7 @@
     <body>
         <header>
             <h2 id = "hidden-header">
-                <span id = "display-name"></span>'s midl Group
+                <span class = "display-name"></span>'s midl Group
             </h2>
             
             <div>
@@ -91,14 +91,21 @@
                 <div>
                     <button id = "midl-button">midl</button>
                 </div>
-                <div id = "lds-ellipsis">
-                    <div></div><div></div><div></div><div></div>
-                </div>
-                <div id = "playlist"></div>
                 <div>
                     <button id = "logout">Log out</button>
                     <p id = "debug">
                     </p>
+                </div>
+                <div id = "lds-ellipsis">
+                    <div></div><div></div><div></div><div></div>
+                </div>
+                <div id = "playlist">
+                    <h3 id = "playlist-header">
+                        <a id = "playlist-link">
+                            <span class = "display-name"></span>'s midl Playlist
+                        </a>
+                    </h3>
+                    <table id = "playlist-table"></table>
                 </div>
             </div>
             <div id = "notification"></div>
