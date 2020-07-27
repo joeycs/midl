@@ -20,7 +20,7 @@ p {
 table {
     width: 100%;
     background-color: #181818;
-    border-radius: 5px;
+    border-radius: 3px;
     border-collapse: collapse;
     transition: 0.3s;
 }
@@ -196,7 +196,7 @@ input:hover {
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background: #131313;
+    background: #181818;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
     margin: 0;
 }
@@ -304,6 +304,7 @@ input:hover {
     display: none;
     white-space: normal;
     margin: 0;
+    margin-top: 1em;
     padding-left: 5em;
     padding-right: 5em;
 }
@@ -327,7 +328,7 @@ input:hover {
 }
 
 #playlist-settings {
-    background-color: #131313;
+    background-color: #181818;
     color: #e9e3d5;
     font-size: 1.125em;
     min-height: 9.375em;
@@ -377,7 +378,7 @@ input:hover {
 }
 
 .highlight {
-    background-color: #131313; 
+    background-color: #181818; 
     color: #e9e3d5;
     border-radius: 3px;
     padding-top: 0.1em;
@@ -401,7 +402,7 @@ input:hover {
     top: -0.18em;
     left: 6.225em;
     background-color: #e9e3d5;
-    color: #131313;
+    color: #181818;
 }
 
 .playlist-form:hover {

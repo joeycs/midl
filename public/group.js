@@ -281,10 +281,10 @@ const fillPlaylist = (playlistId) => {
     document.getElementById("playlist").style.display = "none";
     document.getElementById("playlist-table").innerHTML = `
         <tr>
-            <th></th>
+            <th style = "border-radius: px 0 0 0"></th>
             <th>Track</th>
             <th>Album</th>
-            <th>Artists</th>
+            <th style = "border-radius: 0 0 0 5px">Artists</th>
         </tr>
     `;
 
@@ -324,41 +324,51 @@ const fillPlaylist = (playlistId) => {
 const findMatch = (track) => {
     var currMember, normalizedFeature, diffSum;
 
-    spotify.getAudioFeaturesForTrack(track.id)
-        .then(trackFeatures => {
-
-            for (let i = 1; i < members.length; i++) {
-                currMember = members[i];
-                diffSum = 0.00;
-
-                if (currMember.trackIds.includes(track.id)) {
-                    continue;
-                }
-                else if (matchedLast) {
-                    matchedLast = false;
-                    return;
-                }
-
-                for (feature in currMember.audioProfile) {
-                    normalizedFeature = currMember.audioProfile[feature] / currMember.trackIds.length;
-                    diffSum += Math.abs(trackFeatures[feature] - normalizedFeature);
-                }
-
-                if (diffSum > 1.50) {
-                    matchedLast = false;
-                    return;
-                }
+    if (matchedLast) {
+        for (let i = 1; i < members.length; i++) {
+            currMember = members[i];
+            if (!currMember.trackIds.includes(track.id)) {
+                matchedLast = false;
+                return;
             }
+        }
 
-            matchedLast = true;
-            tracksAdded++;
-            matchedTracks.push(track.uri);
-            showTrack(track);
-            return;
-        });
+        matchedLast = true;
+        tracksAdded++;
+        matchedTracks.push(track.uri);
+        showTrack(track);
+    }
+    else {
+        setTimeout(() => {
+            spotify.getAudioFeaturesForTrack(track.id)
+                .then(trackFeatures => {
 
-    matchedLast = true;
-    tracksAdded++;
+                    for (let i = 1; i < members.length; i++) {
+                        currMember = members[i];
+                        diffSum = 0.00;
+
+                        if (currMember.trackIds.includes(track.id)) {
+                            continue;
+                        }
+
+                        for (feature in currMember.audioProfile) {
+                            normalizedFeature = currMember.audioProfile[feature] / currMember.trackIds.length;
+                            diffSum += Math.abs(trackFeatures[feature] - normalizedFeature);
+                        }
+
+                        if (diffSum > 1.50) {
+                            matchedLast = false;
+                            return;
+                        }
+                    }
+
+                    matchedLast = true;
+                    tracksAdded++;
+                    matchedTracks.push(track.uri);
+                    showTrack(track);
+                });
+        }, 50);  
+    }
 }
 
 const showTrack = (track) => {
@@ -378,8 +388,6 @@ const showTrack = (track) => {
     trackLink.href = track.external_urls["spotify"];
     trackLink.append(albumArt);
     albumArtCell.append(trackLink);
-
-    //playlistLink.href = ;
 
     trackNameCell.innerHTML = track.name;
     albumNameCell.innerHTML = track.album.name;
