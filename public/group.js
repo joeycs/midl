@@ -1,11 +1,10 @@
-const MEMBER_LIMIT = 5;
+const MEMBER_LIMIT = 4;
 
 let SpotifyWebApi = require("spotify-web-api-js");
 let spotify = new SpotifyWebApi();
 let members = [];
 let helpOpen = false;
-let matchedLast = true;
-var notifTimeout, matchedTracks, tracksAdded;
+var notifTimeout, matchedTracks, matchedLast;
 
 const addMe = () => {
     spotify.getMe()
@@ -26,6 +25,9 @@ const addMe = () => {
                     members.push(user);
                     sessionStorage.setItem("members", JSON.stringify(members));
                     showMembersFrom(members.length - 1);
+                })
+                .catch (() => {
+                    showNotification("We couldn't get your user data as Spotify's servers are too busy. Please try again later.");
                 });
         });
 }
@@ -100,7 +102,7 @@ const addUser = (id) => {
                     })
                     .catch(() => {
                         document.getElementById("lds-ellipsis").style.display = "none";
-                        showNotification("We couldn't get that user as Spotify's servers are too busy. Please try again later.");
+                        showNotification("We couldn't get that user's data as Spotify's servers are too busy. Please try again later.");
                     });
             })
             .catch(() => {
@@ -276,19 +278,19 @@ const findPlaylist = (name) => {
 
 const fillPlaylist = (playlistId) => {
     matchedTracks = [];
-    tracksAdded = 0;
+    matchedLast = true;
 
     document.getElementById("playlist").style.display = "none";
     document.getElementById("playlist-table").innerHTML = `
         <tr>
-            <th style = "border-radius: px 0 0 0"></th>
+            <th style = "border-radius: 3px 0 0 0;"></th>
             <th>Track</th>
             <th>Album</th>
-            <th style = "border-radius: 0 0 0 5px">Artists</th>
+            <th style = "border-radius: 0 3px 0 0;">Artists</th>
         </tr>
     `;
 
-    for (let i = 0; i < 10 && tracksAdded < 50; i++) {
+    for (let i = 0; i < 10; i++) {
         spotify.getMySavedTracks({
             "limit": 50, 
             "offset": getRandomInt(0, members[0].tracksTotal - 50)
@@ -309,16 +311,16 @@ const fillPlaylist = (playlistId) => {
             showNotification("We couldn't find many matches. Try adding more tracks to your group\'s public playlists.");
         }
 
-        spotify.addTracksToPlaylist(playlistId, matchedTracks)
+        spotify.addTracksToPlaylist(playlistId, matchedTracks.slice(0, 50))
             .then(() => {
                 document.getElementById("playlist").style.display = "block";
                 document.getElementById("lds-ellipsis").style.display = "none";
             })
-            .catch(() => {
+            .catch(err => {
                 document.getElementById("lds-ellipsis").style.display = "none";
-                showNotification("We couldn't fill your playlist as Spotify's servers are too busy. Please try again later.")
+                showNotification("We couldn't fill your playlist as Spotify's servers are too busy. Please try again later.");
             });
-    }, 4000);
+    }, 10000);
 };
 
 const findMatch = (track) => {
@@ -334,40 +336,36 @@ const findMatch = (track) => {
         }
 
         matchedLast = true;
-        tracksAdded++;
         matchedTracks.push(track.uri);
         showTrack(track);
     }
     else {
-        setTimeout(() => {
-            spotify.getAudioFeaturesForTrack(track.id)
-                .then(trackFeatures => {
+        spotify.getAudioFeaturesForTrack(track.id)
+            .then(trackFeatures => {
 
-                    for (let i = 1; i < members.length; i++) {
-                        currMember = members[i];
-                        diffSum = 0.00;
+                for (let i = 1; i < members.length; i++) {
+                    currMember = members[i];
+                    diffSum = 0.00;
 
-                        if (currMember.trackIds.includes(track.id)) {
-                            continue;
-                        }
-
-                        for (feature in currMember.audioProfile) {
-                            normalizedFeature = currMember.audioProfile[feature] / currMember.trackIds.length;
-                            diffSum += Math.abs(trackFeatures[feature] - normalizedFeature);
-                        }
-
-                        if (diffSum > 1.50) {
-                            matchedLast = false;
-                            return;
-                        }
+                    if (currMember.trackIds.includes(track.id)) {
+                        continue;
                     }
 
-                    matchedLast = true;
-                    tracksAdded++;
-                    matchedTracks.push(track.uri);
-                    showTrack(track);
-                });
-        }, 50);  
+                    for (feature in currMember.audioProfile) {
+                        normalizedFeature = currMember.audioProfile[feature] / currMember.trackIds.length;
+                        diffSum += Math.abs(trackFeatures[feature] - normalizedFeature);
+                    }
+
+                    if (diffSum > 1.50) {
+                        matchedLast = false;
+                        return;
+                    }
+                }
+
+                matchedLast = true;
+                matchedTracks.push(track.uri);
+                showTrack(track);
+            });
     }
 }
 
@@ -379,7 +377,6 @@ const showTrack = (track) => {
     let albumNameCell = document.createElement("td");
     let artistNameCell = document.createElement("td");
     let albumArt = document.createElement("img");
-    let playlistLink = document.createElement("a");
     let trackLink = document.createElement("a");
 
     albumArt.src = track.album.images[0].url;
