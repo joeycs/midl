@@ -15,7 +15,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = '1f6d32e710fa4ebb9a846252034c4df5'; // Your client id
 var client_secret = '4d1d70eec5dc42c3bbd0db052790805b'; // Your secret
-var redirect_uri = 'http://www.midlspotify.com/callback'; // Your redirect uri
+var redirect_uri = 'https://midl-spotify.herokuapp.com/callback'; // Your redirect uri
 
 var stateKey = 'spotify_auth_state';
 var app = express();
@@ -103,7 +103,7 @@ app.get('/callback', (req, res) => {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('http://www.midlspotify.com/group.html#' +
+        res.redirect('https://midl-spotify.herokuapp.com/group.html#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
