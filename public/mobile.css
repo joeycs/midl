@@ -9,13 +9,14 @@ body {
     padding: 0;
     overflow-x: hidden;
     position: relative;
-    transition: 0.3s;
 }
 
 h1 {
-    background-color: #181818;
+    background-color: #9d270b;
+    color: #9d270b;
     font-size: 6em;
     margin: 0;
     padding: 3vh;
-    transition: 1s, padding 0s;
+    -webkit-transition: 1s;
+    transition: 1s;
 }
