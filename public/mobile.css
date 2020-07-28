@@ -1,3 +1,14 @@
+a {
+    color: #9d270b;
+    text-decoration: none;
+    font-size: 0.9em;
+}
+
+a:hover {
+    color: #d68260;
+    transition: 0.2s;
+}
+
 body {
     top: 5vh;
     background-color: #e9e3d5;
@@ -19,6 +30,15 @@ h1 {
     padding: 3vh;
     -webkit-transition: 0s, color 1s;
     transition: 0s, color 1s;
+}
+
+hr {
+    background-color: #181818;
+    border: 0;
+    color: #181818;
+    height: 1px;
+    width: 50vw;
+    opacity: 0.4;
 }
 
 p, img {
