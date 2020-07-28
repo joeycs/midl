@@ -1,8 +1,8 @@
 body {
-    top: 25vh;
+    top: 10vh;
     background-color: #e9e3d5;
     color: #181818;
-    font-family: 'Product Sans', Helvetica, sans-serif;
+    font-family: 'Product Sans', 'Open Sans', Helvetica, sans-serif;
     font-size: 2vh;
     text-align: center;
     margin: 0;
@@ -14,7 +14,7 @@ body {
 
 h1 {
     background-color: #181818;
-    font-size: 4em;
+    font-size: 6em;
     margin: 0;
     padding: 3vh;
     transition: 1s, padding 0s;

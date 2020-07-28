@@ -1,0 +1,1 @@
+document.getElementById('hidden-header').style.color = "#e9e3d5";
