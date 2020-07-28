@@ -2,9 +2,10 @@ const MEMBER_LIMIT = 4;
 
 let SpotifyWebApi = require("spotify-web-api-js");
 let spotify = new SpotifyWebApi();
-let members = [];
+let members = [], matchedTracks = [];
+let matchesAttempted = 0;
 let helpOpen = false;
-var notifTimeout, matchedTracks, matchedLast;
+var notifTimeout;
 
 const addMe = () => {
     spotify.getMe()
@@ -278,7 +279,7 @@ const findPlaylist = (name) => {
 
 const fillPlaylist = (playlistId) => {
     matchedTracks = [];
-    matchedLast = true;
+    matchesAttempted = 0;
 
     document.getElementById("playlist").style.display = "none";
     document.getElementById("playlist-table").innerHTML = `
@@ -290,7 +291,7 @@ const fillPlaylist = (playlistId) => {
         </tr>
     `;
 
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
         spotify.getMySavedTracks({
             "limit": 50, 
             "offset": getRandomInt(0, members[0].tracksTotal - 50)
@@ -318,30 +319,37 @@ const fillPlaylist = (playlistId) => {
             })
             .catch(err => {
                 document.getElementById("lds-ellipsis").style.display = "none";
+                //showNotification(JSON.stringify(err.getResponseHeader("retry-after")));
                 showNotification("We couldn't fill your playlist as Spotify's servers are too busy. Please try again later.");
             });
     }, 10000);
 };
 
 const findMatch = (track) => {
+    let matchRate = 1.00;
     var currMember, normalizedFeature, diffSum;
 
-    if (matchedLast) {
+    if (matchesAttempted > 0) {
+        matchRate = matchedTracks.length / matchesAttempted;
+    }
+
+    if (matchRate > 0.50) {
+        matchesAttempted++;
+
         for (let i = 1; i < members.length; i++) {
             currMember = members[i];
             if (!currMember.trackIds.includes(track.id)) {
-                matchedLast = false;
                 return;
             }
         }
 
-        matchedLast = true;
         matchedTracks.push(track.uri);
         showTrack(track);
     }
     else {
         spotify.getAudioFeaturesForTrack(track.id)
             .then(trackFeatures => {
+                matchesAttempted++;
 
                 for (let i = 1; i < members.length; i++) {
                     currMember = members[i];
@@ -357,12 +365,10 @@ const findMatch = (track) => {
                     }
 
                     if (diffSum > 1.50) {
-                        matchedLast = false;
                         return;
                     }
                 }
 
-                matchedLast = true;
                 matchedTracks.push(track.uri);
                 showTrack(track);
             });

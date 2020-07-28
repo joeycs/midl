@@ -18,7 +18,8 @@ p {
 }
 
 table {
-    width: 100%;
+    width: 50%;
+    margin-left: 25%;
     background-color: #181818;
     border-radius: 3px;
     border-collapse: collapse;
@@ -304,9 +305,7 @@ input:hover {
     display: none;
     white-space: normal;
     margin: 0;
-    margin-top: 1em;
-    padding-left: 5em;
-    padding-right: 5em;
+    margin-top: 2.25em;
 }
 
 #playlist-header {
@@ -349,6 +348,7 @@ input:hover {
 
 .album-art {
     height: 3em;
+    margin-bottom: -0.325em;
     border-radius: 3px;
     transition: 0.2s;
 }
