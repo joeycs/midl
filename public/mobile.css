@@ -21,6 +21,11 @@ h1 {
     transition: 0s, color 1s;
 }
 
+p, img {
+    opacity: 0;
+    transition: 1s;
+}
+
 @font-face {
     font-family: 'Product Sans';
     font-style: normal;
