@@ -14,8 +14,10 @@ const detectMobile = () => {
     });
 }
 
-if (detectMobile()) {
-    window.location = "/mobile.html";
+window.onbeforeunload = () => {
+    if (detectMobile()) {
+        window.location = "/mobile.html";
+    }
 }
 
 document.getElementById('hidden-header').style.color = "#e9e3d5";
