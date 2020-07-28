@@ -1,0 +1,25 @@
+body {
+    top: 25vh;
+    background-color: #e9e3d5;
+    color: #181818;
+    font-family: 'Product Sans', Helvetica, sans-serif;
+    font-size: 3vh;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+    transition: 0.3s;
+}
+
+h1 {
+    background-color: #181818;
+    font-size: 4em;
+    margin: 0;
+    padding: 3vh;
+    transition: 1s, padding 0s;
+}
+
+img {
+    margin-top: 4vh;
+}

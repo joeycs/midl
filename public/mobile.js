@@ -10,7 +10,8 @@ const toMatch = [
 
 if (toMatch.some((toMatchItem) => {
         return navigator.userAgent.match(toMatchItem);
-    })) 
+    }) && 
+    window.location !== "/mobile.html") 
 {
     window.location = "/mobile.html";
 }
