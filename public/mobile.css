@@ -1,7 +1,7 @@
 a {
     color: #9d270b;
     text-decoration: none;
-    font-size: 0.9em;
+    font-size: 0.5em;
 }
 
 a:hover {
@@ -37,11 +37,11 @@ hr {
     border: 0;
     color: #181818;
     height: 1px;
-    width: 50vw;
+    width: 75vw;
     opacity: 0.4;
 }
 
-p, img {
+p, img, footer {
     opacity: 0;
     transition: 1s;
 }
