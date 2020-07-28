@@ -7,6 +7,22 @@ let matchesAttempted = 0;
 let helpOpen = false;
 var notifTimeout;
 
+const detectMobile = () => {
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
+}
+
 const addMe = () => {
     spotify.getMe()
         .then(res => {
@@ -440,6 +456,10 @@ const showNotification = (msg) => {
             "z-index: 0; right: -15em; transition: 0.3s"
         );
     }, 3000);
+}
+
+if (detectMobile()) {
+    window.location = "/mobile.html";
 }
 
 spotify.setAccessToken(getHashParams().access_token);
