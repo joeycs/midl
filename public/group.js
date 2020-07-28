@@ -254,7 +254,7 @@ const makePlaylist = (name, isPublic, isCollaborative, description, _callback) =
                     fillPlaylist(res.id);
                     showNotification("\"" + localName + "\" has been saved to your library!");
                 })
-                .catch(() => {
+                .catch(err => {
                     document.getElementById("lds-ellipsis").style.display = "none";
                 });
         }
@@ -281,7 +281,6 @@ const fillPlaylist = (playlistId) => {
     matchedTracks = [];
     matchesAttempted = 0;
 
-    document.getElementById("playlist").style.display = "none";
     document.getElementById("playlist-table").innerHTML = `
         <tr>
             <th style = "border-radius: 3px 0 0 0;"></th>
@@ -481,9 +480,10 @@ document.getElementById("logout").addEventListener("click", () => {
 
 document.getElementById("midl-button").addEventListener("click", () => {
     document.getElementById("midl-button").disabled = true;
+    document.getElementById("playlist").style.display = "none";
 
     if (document.getElementById("playlist-name").value !== "") {
-        document.getElementById("playlist-header").innerHTML = 
+        document.getElementById("playlist-link").innerHTML = 
             document.getElementById("playlist-name").value;
     }
 
