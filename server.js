@@ -103,7 +103,7 @@ app.get('/callback', (req, res) => {
         });
 
         // we can also pass the token to the browser to make requests from there
-        res.redirect('https://midlspotify.com/group.html#' +
+        res.redirect('https://www.midlspotify.com/group.html#' +
           querystring.stringify({
             access_token: access_token,
             refresh_token: refresh_token
