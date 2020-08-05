@@ -7,9 +7,15 @@ let matchesAttempted = 0;
 let helpOpen = false;
 var notifTimeout;
 
+/**
+ * Add current user of the app to the group.
+ */
+
 const addMe = () => {
     spotify.getMe()
         .then(res => {
+
+            // Create object which stores current user's data
             let user = {
                 id: res.id,
                 name: res.display_name,
@@ -22,6 +28,11 @@ const addMe = () => {
                 "offset": 0
             })
                 .then(tracks => {
+                    /**
+                     * Store the current user's total number of saved tracks
+                     * to determine random offset when searching saved tracks
+                     * within track matching algorithm.  
+                     */
                     user.tracksTotal = tracks.total;
                     members.push(user);
                     sessionStorage.setItem("members", JSON.stringify(members));
@@ -33,18 +44,26 @@ const addMe = () => {
         });
 }
 
+/**
+ * Add desired user to the group.
+ * @param {string} id - ID belonging to the user to be added. 
+ */
+
 const addUser = (id) => {
-    let memberInGroup = false;
+
+    var trackInList;
+
+    // Convert user ID to lowercase to prevent adding duplicate users to group
     let userId = id.toLowerCase();
-    var includes;
     
-    members.forEach(user => {
-        if (user.id === userId) {
-            memberInGroup = true;
-        }
+    // Check if user to be added already exists in the group
+    let userInGroup = false;
+
+    userInGroup = members.some(user => {
+        return user.id === userId;
     });
 
-    if (memberInGroup) {
+    if (userInGroup) {
         showNotification("Looks like that user is already in your group!");
     }
     else if (members.length >= MEMBER_LIMIT) {
@@ -53,6 +72,8 @@ const addUser = (id) => {
     else {
         spotify.getUser(userId)
             .then(res => {
+
+                // Create object which stores user's data
                 let user = {
                     id: userId,
                     name: res.display_name,
@@ -68,6 +89,10 @@ const addUser = (id) => {
                     }
                 };
 
+                /**
+                 * Retrieve the IDs of all tracks existing in all
+                 * of the user's public playlists.
+                 */
                 spotify.getUserPlaylists(userId)
                     .then(playlists => {
 
@@ -77,16 +102,18 @@ const addUser = (id) => {
                                 .then(res => {
 
                                     res.items.forEach(item => {
-                                        includes = false;
+                                        /**
+                                         * In the case of duplicate track across user's playlists,
+                                         * prevent adding duplicate to list of tracks;
+                                         * otherwise, add it to the list of tracks 
+                                         * */ 
+                                        trackInList = false;
 
-                                        for (let i = 0; i < user.trackIds.length; i++) {
-                                            if (user.trackIds[i] === item.track.id) {
-                                                includes = true;
-                                                break;
-                                            }
-                                        }
+                                        trackInList = user.trackIds.some(trackId => {
+                                            return trackId === item.track.id;
+                                        }); 
 
-                                        if (!includes) {
+                                        if (!trackInList) {
                                             user.trackIds.push(item.track.id)
                                         }
                                     });
@@ -100,6 +127,7 @@ const addUser = (id) => {
                         members.push(user);
                         sessionStorage.setItem("members", JSON.stringify(members));
                         showMembersFrom(members.length - 1);
+
                     })
                     .catch(() => {
                         document.getElementById("lds-ellipsis").style.display = "none";
@@ -112,14 +140,20 @@ const addUser = (id) => {
     }
 }
 
-const removeUser = (userId) => {
+/**
+ * Remove desired user from the group.
+ * @param {string} id - ID belonging to the user to be removed. 
+ */
+
+const removeUser = (id) => {
     let namesContainer = document.getElementById("names-container");
     let picsContainer = document.getElementById("pics-container");
 
+    // Search list of members for user to be removed, excluding group owner
     for (let i = 1; i < members.length; i++) {
         let currUser = members[i];
 
-        if (currUser.id === userId) {
+        if (currUser.id === id) {
             members.splice(i, 1);
             namesContainer.removeChild(document.getElementById(currUser.id + "-text"));
             picsContainer.removeChild(document.getElementById(currUser.id + "-img"));
@@ -130,6 +164,12 @@ const removeUser = (userId) => {
 
     sessionStorage.setItem("members", JSON.stringify(members));
 }
+
+/**
+ * Display the profile pictures and display names of
+ * current group members from the given index to the newest member.
+ * @param {integer} i - Index of the first group member to be displayed. 
+ */
 
 const showMembersFrom = (i) => {
     let currNameId = members[0].id + "-text";
@@ -163,6 +203,10 @@ const showMembersFrom = (i) => {
         profilePic.classList.add("profile-pic");
         picsContainer.appendChild(profilePic);
 
+        /**
+         * If not displaying the first member, i.e. the group owner,
+         * include button for removing member from the group
+         */
         if (i > 0) {
             let removeIcon = document.createElement("img");
 
@@ -194,17 +238,28 @@ const showMembersFrom = (i) => {
     document.getElementById(currNameId).style.color = "#181818";
 
     setTimeout(() => {
+        // Wait for member information to load, then unhide all members
         document.getElementById("pics-container").style.left = "0%";
         document.getElementById("names-container").style.color = "#e9e3d5";
         document.getElementById(currNameId).style.color = "#e9e3d5";
     }, 20);
 }
 
+/**
+ * Set the attributes of the given user's audio profile object which describe their
+ * music preferences according to the tracks existing in their public playlists.
+ * @param {Object} user - User for which the audio profile is to be set.
+ */
+
 const setAudioProfile = (user) => {
     var currTrackFeatures;
 
     spotify.getAudioFeaturesForTracks(user.trackIds)
         .then(res => {
+            /**
+             * Get the sum of each audio feature from each track
+             * obtained from all of the user's public playlists.
+             */
             features = res.audio_features;
 
             for (let i = 0; i < features.length; i++) {
@@ -219,16 +274,27 @@ const setAudioProfile = (user) => {
         });
 }
 
+/**
+ * Creates a Spotify playlist with the given attributes.
+ * @param {string} name - name of the playlist to be created.
+ * @param {boolean} isPublic - determines if the playlist to be created will be public.
+ * @param {boolean} isCollaborative - determines if the playlist to be created will be collaborative.
+ * @param {string} description - description of the playlist to be created.
+ * @param {function()} _callback - function to be called after the playlist has been created.
+ */
+
 const makePlaylist = (name, isPublic, isCollaborative, description, _callback) => {
     let localName = name;
     let nameTaken = false;
     let nameTakenMsg = "You already have a playlist with that name!";
 
     if (localName === "") {
+        // If no playlist name provided, use default name
         localName = members[0].name + "\'s midl Playlist";
         nameTakenMsg = "You already have a playlist with the default name!"
     }
 
+    // Determine if a playlist of the given name already exists in the group owner's library
     findPlaylist(localName);
 
     setTimeout(() => {
@@ -247,14 +313,15 @@ const makePlaylist = (name, isPublic, isCollaborative, description, _callback) =
                 "description": description
             };
 
+            // Create playlist with the given attributes
             spotify.createPlaylist(members[0].id, playlistData)
                 .then(res => {
                     document.getElementById("playlist-link").href = res.external_urls["spotify"];
-
+                    // After the playlist is created, fill the playlist
                     fillPlaylist(res.id);
                     showNotification("\"" + localName + "\" has been saved to your library!");
                 })
-                .catch(err => {
+                .catch(() => {
                     document.getElementById("lds-ellipsis").style.display = "none";
                 });
         }
@@ -264,6 +331,12 @@ const makePlaylist = (name, isPublic, isCollaborative, description, _callback) =
 
     sessionStorage.removeItem("foundPlaylist");
 }
+
+/**
+ * Iterate over the group owner's playlists to determine
+ * if a playlist of the given name exists.
+ * @param {string} name - name of the playlist to be searched for.
+ */
 
 const findPlaylist = (name) => {
     spotify.getUserPlaylists()
@@ -277,10 +350,17 @@ const findPlaylist = (name) => {
         });
 }
 
+/**
+ * Use match tracking algorithm to fill playlist with tracks from the group owner's library
+ * which all group members prefer based on the tracks existing in their public playlists.
+ * @param {string} playlistId - ID of the playlist to be filled.
+ */
+
 const fillPlaylist = (playlistId) => {
     matchedTracks = [];
     matchesAttempted = 0;
 
+    // Initialize table which displays tracks in the filled playlist
     document.getElementById("playlist-table").innerHTML = `
         <tr>
             <th style = "border-radius: 3px 0 0 0;"></th>
@@ -290,14 +370,17 @@ const fillPlaylist = (playlistId) => {
         </tr>
     `;
 
+    // Run match tracking algorithm a maximum of 20 times to prevent exceeding API call limit
     for (let i = 0; i < 20; i++) {
         spotify.getMySavedTracks({
             "limit": 50, 
             "offset": getRandomInt(0, members[0].tracksTotal - 50)
         })
             .then(myTracks => {
+                // Obtain 50 tracks from group owner's library starting at a randomly selected offset
                 for (let j = 0; j < 50; j++) {
-                    findMatch(myTracks.items[j].track);
+                    // Attempt to match current track with other group member's preferences
+                    matchTrack(myTracks.items[j].track);
                 }
             })
             .catch(() => {
@@ -307,34 +390,51 @@ const fillPlaylist = (playlistId) => {
     }
 
     setTimeout(() => {
+        /**
+         * Wait 10 seconds to allow asynchronous API calls within track matching algorithm to complete
+         * and prevent exceeding API call limit, then add tracks which were matched to the playlist
+         */
+
         if (matchedTracks.length < 20) {
             showNotification("We couldn't find many matches. Try adding more tracks to your group\'s public playlists.");
         }
 
         spotify.addTracksToPlaylist(playlistId, matchedTracks.slice(0, 50))
             .then(() => {
+                // Unhide table which displays the playlist's tracks
                 document.getElementById("playlist").style.display = "block";
                 document.getElementById("lds-ellipsis").style.display = "none";
             })
             .catch(err => {
                 document.getElementById("lds-ellipsis").style.display = "none";
-                //showNotification(JSON.stringify(err.getResponseHeader("retry-after")));
                 showNotification("We couldn't fill your playlist as Spotify's servers are too busy. Please try again later.");
+                // showNotification(JSON.stringify(err.getResponseHeader("retry-after")));
             });
     }, 10000);
 };
 
-const findMatch = (track) => {
+/**
+ * Attempt to match track from group owner's library to the preferences of all other group members.
+ * @param {Object} track - track which will be attempted to be matched.
+ */
+
+const matchTrack = (track) => {
     let matchRate = 1.00;
     var currMember, normalizedFeature, diffSum;
 
     if (matchesAttempted > 0) {
+        // Determine the current rate at which the track matching algorithm has been successful
         matchRate = matchedTracks.length / matchesAttempted;
     }
 
     if (matchRate > 0.50) {
+        /**
+         * If the current match rate is high, attempt to match identical tracks
+         * to improve the probability that matched tracks are preferred by all members.
+         */
         matchesAttempted++;
 
+        // For each member, check if the given track exists in their public playlists 
         for (let i = 1; i < members.length; i++) {
             currMember = members[i];
             if (!currMember.trackIds.includes(track.id)) {
@@ -342,14 +442,29 @@ const findMatch = (track) => {
             }
         }
 
+        /**
+         * If the track is a match for all members, add it to the list of 
+         * matched tracks and add the track to the playlist table.
+         */
+
         matchedTracks.push(track.uri);
         showTrack(track);
     }
     else {
+        /**
+         * If the current match rate is low, attempt to match tracks based on
+         * members' audio profiles if they are not an exact match to ensure
+         * the playlist is adequately filled.
+         */
         spotify.getAudioFeaturesForTrack(track.id)
             .then(trackFeatures => {
                 matchesAttempted++;
 
+                /**
+                 * For each member, check if the track exists in their public playlists
+                 * or matches closely to their audio profile determined form the tracks
+                 * existing in their public playlists.
+                 */
                 for (let i = 1; i < members.length; i++) {
                     currMember = members[i];
                     diffSum = 0.00;
@@ -368,11 +483,21 @@ const findMatch = (track) => {
                     }
                 }
 
+                /**
+                 * If the track is a match for all members, add it to the list of 
+                 * matched tracks and add the track to the playlist table.
+                 */
+
                 matchedTracks.push(track.uri);
                 showTrack(track);
             });
     }
 }
+
+/**
+ * Add matched track to the table containing the playlist's tracks.
+ * @param {Object} track - track to be added to the playlist table.
+ */
 
 const showTrack = (track) => {
     let table = document.getElementById("playlist-table");
@@ -409,6 +534,11 @@ const showTrack = (track) => {
     table.appendChild(trackRow);
 }
 
+/**
+ * Get paramaters from app's current location.
+ * @return {integer} object containing URI parameters.
+ */
+
 const getHashParams = () => {
     let hashParams = {};
     let e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -419,11 +549,23 @@ const getHashParams = () => {
     return hashParams;
 }
 
+/**
+ * Get random integer in given range.
+ * @param {integer} min - inclusive beginning of range.
+ * @param {integer} max - inclusive end of range.
+ * @return {integer} random integer in given range.
+ */
+
 const getRandomInt = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
+
+/**
+ * Display notification to app user to indicate an error or other feedback.
+ * @param {string} msg - contents of the notification to be displayed.
+ */
 
 const showNotification = (msg) => {
     clearTimeout(notifTimeout);
@@ -442,17 +584,24 @@ const showNotification = (msg) => {
     }, 3000);
 }
 
+// Use access token for URL paramaters to authentice API calls
 spotify.setAccessToken(getHashParams().access_token);
 
 if (JSON.parse(sessionStorage.getItem("members")) === null) {
+    // If a group is being created for the first time this session, initialize group with app user
     addMe();
 }
 else {
+    // If a group has already been created this session, retrieve members and display them
     members = JSON.parse(sessionStorage.getItem("members"));
     showMembersFrom(0);
 }
 
 document.getElementById("dropdown-button").addEventListener("click", () => {
+    /**
+     * If not already shown, unhide information which provides instructions
+     * for adding members to the group and creating a playlist.
+     */
     if (helpOpen) {
         document.getElementById("dropdown-content").style.opacity = "0";
         document.getElementById("dropdown-content").style.zIndex = "-1";
@@ -466,6 +615,10 @@ document.getElementById("dropdown-button").addEventListener("click", () => {
 });
 
 document.getElementById("submit-profile-link").addEventListener("click", (e) => {
+    /**
+     * Parse ID of user to be added to group from their profile link,
+     * or simply retrieve their ID if it is specifically provided
+     */
     e.preventDefault();
     let userLink = (document.forms["add-friend"]["profile-link"].value).split("/");
     let userParams = userLink[userLink.length - 1].split("?");
@@ -474,11 +627,16 @@ document.getElementById("submit-profile-link").addEventListener("click", (e) => 
 });
 
 document.getElementById("logout").addEventListener("click", () => {
+    // When the user logs out, remove group from session storage and return to log in page
     sessionStorage.removeItem("members");
     window.location = "/index.html"; 
 });
 
 document.getElementById("midl-button").addEventListener("click", () => {
+    /**
+     * If the user has added at least one member to their group,
+     * make a playlist with the attributes they provided 
+     */
     document.getElementById("midl-button").disabled = true;
     document.getElementById("playlist").style.display = "none";
 
@@ -493,6 +651,7 @@ document.getElementById("midl-button").addEventListener("click", () => {
                     document.getElementById("playlist-collab").checked,
                     document.getElementById("playlist-desc").value,
                     () => {
+                        // When the playlist has been created and filled, allow the user to make another playlist
                         document.getElementById("midl-button").disabled = false;
                     });
     }
