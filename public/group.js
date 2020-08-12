@@ -8,13 +8,22 @@ let helpOpen = false;
 var notifTimeout;
 
 /**
+ * Selects element from DOM by its ID using the shorthand '$'.
+ * @param {string} id - ID of the element to be selected.
+ * @return {object} Selected element.
+ */
+
+let $ = (id) => {
+    return document.getElementById(id);
+}
+
+/**
  * Add current user of the app to the group.
  */
 
 const addMe = () => {
     spotify.getMe()
         .then(res => {
-
             // Create object which stores current user's data
             let user = {
                 id: res.id,
@@ -72,7 +81,6 @@ const addUser = (id) => {
     else {
         spotify.getUser(userId)
             .then(res => {
-
                 // Create object which stores user's data
                 let user = {
                     id: userId,
@@ -95,12 +103,9 @@ const addUser = (id) => {
                  */
                 spotify.getUserPlaylists(userId)
                     .then(playlists => {
-
                         playlists.items.forEach(playlist => {
-
                             spotify.getPlaylistTracks(playlist.id)
                                 .then(res => {
-
                                     res.items.forEach(item => {
                                         /**
                                          * In the case of duplicate track across user's playlists,
@@ -119,18 +124,14 @@ const addUser = (id) => {
                                     });
 
                                     setAudioProfile(user);
-
                                 });
-
                         });
-
                         members.push(user);
                         sessionStorage.setItem("members", JSON.stringify(members));
                         showMembersFrom(members.length - 1);
-
                     })
                     .catch(() => {
-                        document.getElementById("lds-ellipsis").style.display = "none";
+                        $("lds-ellipsis").style.display = "none";
                         showNotification("We couldn't get that user's data as Spotify's servers are too busy. Please try again later.");
                     });
             })
@@ -146,8 +147,8 @@ const addUser = (id) => {
  */
 
 const removeUser = (id) => {
-    let namesContainer = document.getElementById("names-container");
-    let picsContainer = document.getElementById("pics-container");
+    let namesContainer = $("names-container");
+    let picsContainer = $("pics-container");
 
     // Search list of members for user to be removed, excluding group owner
     for (let i = 1; i < members.length; i++) {
@@ -155,9 +156,9 @@ const removeUser = (id) => {
 
         if (currUser.id === id) {
             members.splice(i, 1);
-            namesContainer.removeChild(document.getElementById(currUser.id + "-text"));
-            picsContainer.removeChild(document.getElementById(currUser.id + "-img"));
-            picsContainer.removeChild(document.getElementById(currUser.id + "-remove"));
+            namesContainer.removeChild($(currUser.id + "-text"));
+            picsContainer.removeChild($(currUser.id + "-img"));
+            picsContainer.removeChild($(currUser.id + "-remove"));
             break;
         }
     }
@@ -177,8 +178,8 @@ const showMembersFrom = (i) => {
     document.getElementsByClassName("display-name")[1].innerHTML = members[0].name;
 
     for (i; i < members.length; i++) {
-        let namesContainer = document.getElementById("names-container");
-        let picsContainer = document.getElementById("pics-container");
+        let namesContainer = $("names-container");
+        let picsContainer = $("pics-container");
         let displayName = document.createElement("span");
         let profilePic = document.createElement("img");
 
@@ -234,14 +235,14 @@ const showMembersFrom = (i) => {
         }
     }
 
-    document.getElementById("hidden-header").style.color = "#e9e3d5";
-    document.getElementById(currNameId).style.color = "#181818";
+    $("hidden-header").style.color = "#e9e3d5";
+    $(currNameId).style.color = "#181818";
 
     setTimeout(() => {
         // Wait for member information to load, then unhide all members
-        document.getElementById("pics-container").style.left = "0%";
-        document.getElementById("names-container").style.color = "#e9e3d5";
-        document.getElementById(currNameId).style.color = "#e9e3d5";
+        $("pics-container").style.left = "0%";
+        $("names-container").style.color = "#e9e3d5";
+        $(currNameId).style.color = "#e9e3d5";
     }, 20);
 }
 
@@ -304,7 +305,7 @@ const makePlaylist = (name, isPublic, isCollaborative, description, _callback) =
             showNotification(nameTakenMsg);
         }
         else {
-            document.getElementById("lds-ellipsis").style.display = "inline-block";
+            $("lds-ellipsis").style.display = "inline-block";
 
             let playlistData = {
                 "name": localName,
@@ -316,13 +317,13 @@ const makePlaylist = (name, isPublic, isCollaborative, description, _callback) =
             // Create playlist with the given attributes
             spotify.createPlaylist(members[0].id, playlistData)
                 .then(res => {
-                    document.getElementById("playlist-link").href = res.external_urls["spotify"];
+                    $("playlist-link").href = res.external_urls["spotify"];
                     // After the playlist is created, fill the playlist
                     fillPlaylist(res.id);
                     showNotification("\"" + localName + "\" has been saved to your library!");
                 })
                 .catch(() => {
-                    document.getElementById("lds-ellipsis").style.display = "none";
+                    $("lds-ellipsis").style.display = "none";
                 });
         }
 
@@ -361,7 +362,7 @@ const fillPlaylist = (playlistId) => {
     matchesAttempted = 0;
 
     // Initialize table which displays tracks in the filled playlist
-    document.getElementById("playlist-table").innerHTML = `
+    $("playlist-table").innerHTML = `
         <tr>
             <th style = "border-radius: 3px 0 0 0;"></th>
             <th>Track</th>
@@ -384,7 +385,7 @@ const fillPlaylist = (playlistId) => {
                 }
             })
             .catch(() => {
-                document.getElementById("lds-ellipsis").style.display = "none";
+                $("lds-ellipsis").style.display = "none";
                 showNotification("We couldn't retrieve your tracks as Spotify's servers are too busy. Please try again later.")
             });
     }
@@ -402,11 +403,11 @@ const fillPlaylist = (playlistId) => {
         spotify.addTracksToPlaylist(playlistId, matchedTracks.slice(0, 50))
             .then(() => {
                 // Unhide table which displays the playlist's tracks
-                document.getElementById("playlist").style.display = "block";
-                document.getElementById("lds-ellipsis").style.display = "none";
+                $("playlist").style.display = "block";
+                $("lds-ellipsis").style.display = "none";
             })
             .catch(err => {
-                document.getElementById("lds-ellipsis").style.display = "none";
+                $("lds-ellipsis").style.display = "none";
                 showNotification("We couldn't fill your playlist as Spotify's servers are too busy. Please try again later.");
                 // showNotification(JSON.stringify(err.getResponseHeader("retry-after")));
             });
@@ -500,7 +501,7 @@ const matchTrack = (track) => {
  */
 
 const showTrack = (track) => {
-    let table = document.getElementById("playlist-table");
+    let table = $("playlist-table");
     let trackRow = document.createElement("tr");
     let albumArtCell = document.createElement("td");
     let trackNameCell = document.createElement("td");
@@ -544,7 +545,7 @@ const getHashParams = () => {
     let e, r = /([^&;=]+)=?([^&;]*)/g,
         q = window.location.hash.substring(1);
     while (e = r.exec(q)) {
-       hashParams[e[1]] = decodeURIComponent(e[2]);
+        hashParams[e[1]] = decodeURIComponent(e[2]);
     }
     return hashParams;
 }
@@ -569,15 +570,15 @@ const getRandomInt = (min, max) => {
 
 const showNotification = (msg) => {
     clearTimeout(notifTimeout);
-    document.getElementById("notification").innerHTML = msg;
+    $("notification").innerHTML = msg;
 
-    document.getElementById("notification").setAttribute(
+    $("notification").setAttribute(
         "style",
         "z-index: 1; right: -0.225em; transition: 0.5s"
     );
 
     notifTimeout = setTimeout(() => {
-        document.getElementById("notification").setAttribute(
+        $("notification").setAttribute(
             "style",
             "z-index: 0; right: -15em; transition: 0.3s"
         );
@@ -597,24 +598,24 @@ else {
     showMembersFrom(0);
 }
 
-document.getElementById("dropdown-button").addEventListener("click", () => {
+$("dropdown-button").addEventListener("click", () => {
     /**
      * If not already shown, unhide information which provides instructions
      * for adding members to the group and creating a playlist.
      */
     if (helpOpen) {
-        document.getElementById("dropdown-content").style.opacity = "0";
-        document.getElementById("dropdown-content").style.zIndex = "-1";
+        $("dropdown-content").style.opacity = "0";
+        $("dropdown-content").style.zIndex = "-1";
         helpOpen = false;
     }
     else {
-        document.getElementById("dropdown-content").style.opacity = "1";
-        document.getElementById("dropdown-content").style.zIndex = "1";
+        $("dropdown-content").style.opacity = "1";
+        $("dropdown-content").style.zIndex = "1";
         helpOpen = true;
     }
 });
 
-document.getElementById("submit-profile-link").addEventListener("click", (e) => {
+$("submit-profile-link").addEventListener("click", (e) => {
     /**
      * Parse ID of user to be added to group from their profile link,
      * or simply retrieve their ID if it is specifically provided
@@ -626,37 +627,36 @@ document.getElementById("submit-profile-link").addEventListener("click", (e) => 
     addUser(userId);
 });
 
-document.getElementById("logout").addEventListener("click", () => {
+$("logout").addEventListener("click", () => {
     // When the user logs out, remove group from session storage and return to log in page
     sessionStorage.removeItem("members");
     window.location = "/index.html"; 
 });
 
-document.getElementById("midl-button").addEventListener("click", () => {
+$("midl-button").addEventListener("click", () => {
     /**
      * If the user has added at least one member to their group,
      * make a playlist with the attributes they provided 
      */
-    document.getElementById("midl-button").disabled = true;
-    document.getElementById("playlist").style.display = "none";
+    $("midl-button").disabled = true;
+    $("playlist").style.display = "none";
 
-    if (document.getElementById("playlist-name").value !== "") {
-        document.getElementById("playlist-link").innerHTML = 
-            document.getElementById("playlist-name").value;
+    if ($("playlist-name").value !== "") {
+        $("playlist-link").innerHTML = $("playlist-name").value;
     }
 
     if (members.length > 1) {
-        makePlaylist(document.getElementById("playlist-name").value,
-                    document.getElementById("playlist-public").checked,
-                    document.getElementById("playlist-collab").checked,
-                    document.getElementById("playlist-desc").value,
-                    () => {
+        makePlaylist($("playlist-name").value,
+                     $("playlist-public").checked,
+                     $("playlist-collab").checked,
+                     $("playlist-desc").value,
+                     () => {
                         // When the playlist has been created and filled, allow the user to make another playlist
-                        document.getElementById("midl-button").disabled = false;
-                    });
+                        $("midl-button").disabled = false;
+                     });
     }
     else {
         showNotification("Add some friends to your group first!");
-        document.getElementById("midl-button").disabled = false;
+        $("midl-button").disabled = false;
     }
 });
