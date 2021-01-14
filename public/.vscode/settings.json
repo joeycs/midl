@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/23d3265e-7469-48b4-9761-48cfc7513b6d/resourceGroups/VstsRG-joeycs-d0e7/providers/Microsoft.Web/sites/midl-public",
-    "appService.deploySubpath": "."
-}
