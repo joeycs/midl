@@ -1,5 +1,5 @@
-document.getElementById('hidden-header').style.color = "#e9e3d5";
+document.getElementById("hidden-header").style.color = "#e9e3d5";
 
-document.getElementById('login').addEventListener('click', () => {
-    window.location = '/login';
+document.getElementById("login").addEventListener("click", () => {
+  window.location = "/login";
 });
